@@ -10,12 +10,12 @@ class Player {
 
   public:
   Player(float x, float y);
-  void update(float x,float y);
-  float get_x();
-  float get_y();
+  void update(float newX,float newY);
+  float getX();
+  float getY();
 };
 
-class Obstaculo {
+/*class Obstaculo {
   private:
   float x;
   float comprimento;
@@ -33,11 +33,11 @@ class Lane {
 
   public:
   Lane(float y, int nivel);
-};
+};*/
 
 
 
-class Corpo {
+/*class Corpo {
   private:
   float massa;
   float velocidade;
@@ -68,9 +68,9 @@ class ListaDeCorpos {
     void hard_copy(ListaDeCorpos *ldc);
     void add_corpo(Corpo *c);
     std::vector<Corpo*> *get_corpos();
-};
+};*/
 
-class Fisica {
+/*class Fisica {
   private:
     ListaDeCorpos *lista;
 
@@ -79,16 +79,18 @@ class Fisica {
     void add_corpo(Corpo *c);
     void choque(float forca);
     void update(float deltaT);
-};
+};*/
 
 class Tela {
   private:
-    ListaDeCorpos *lista, *lista_anterior;
+    //ListaDeCorpos *lista, *lista_anterior;
+    Player *playerAtual, *playerAnterior;
     int maxI, maxJ;
     float maxX, maxY;
 
   public:
-    Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY);
+    //Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY);
+    Tela(Player *player, int maxI, int maxJ, float maxX, float maxY);
     ~Tela();
     void stop();
     void init();
