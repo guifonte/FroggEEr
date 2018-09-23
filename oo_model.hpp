@@ -32,6 +32,7 @@ class Player {
 class Lane {
   private:
   int x;
+  int nivel;
   float pos;
   float velocidade;
   public:
@@ -39,6 +40,7 @@ class Lane {
   Lane(int y, int nivel);
   void update(float newPos);
   float getPos();
+  int getNivel();
   int getX();
   float getSpeed();
 };
@@ -66,17 +68,17 @@ class Lane {
   float get_amortecimento();
   float get_forca();
 };
-
-class ListaDeCorpos {
+*/
+class ListaDeLanes {
  private:
-    std::vector<Corpo*> *corpos;
+    std::vector<Lane*> *lanes;
 
   public:
-    ListaDeCorpos();
-    void hard_copy(ListaDeCorpos *ldc);
-    void add_corpo(Corpo *c);
-    std::vector<Corpo*> *get_corpos();
-};*/
+    ListaDeLanes();
+    void hard_copy(ListaDeLanes *ldl);
+    void add_lane(Lane *l);
+    std::vector<Lane*> *get_lanes();
+};
 
 class Fisica {
   private:

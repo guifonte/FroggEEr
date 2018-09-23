@@ -13,26 +13,17 @@ uint64_t get_now_ms() {
 int main ()
 {
   Player *player = new Player(10, 10);
-  Lane *lane = new Lane(9,1);
-  /*Corpo *c1 = new Corpo(10, 30, 10, 100, 3);
-  Corpo *c2 = new Corpo(10, 20, 10, 50, 0);
-  Corpo *c3 = new Corpo(10, 50, 10, 20, 1.5);
-  Corpo *c4 = new Corpo(10, 10, 10, 100, 0.3);
-  Corpo *c5 = new Corpo(10, 15, 10, 80, 2);
-  Corpo *c6 = new Corpo(10, 2, 10, 90, 0);
-  Corpo *c7 = new Corpo(10, -15, 10, 15, 5);
-  Corpo *c8 = new Corpo(10, -20, 10, 120, 10);
+  Lane *l1 = new Lane(9,1);
+  Lane *l2 = new Lane(10,3);
+  Lane *l3 = new Lane(11,5);
+  Lane *l4 = new Lane(12,7);
 
-  ListaDeCorpos *l = new ListaDeCorpos();
-  l->add_corpo(c1);
-  l->add_corpo(c2);
-  l->add_corpo(c3);
-  l->add_corpo(c4);
-  l->add_corpo(c5);
-  l->add_corpo(c6);
-  l->add_corpo(c7);
-  l->add_corpo(c8);
-  */
+  ListaDeLanes *l = new ListaDeLanes();
+  l->add_corpo(l1);
+  l->add_corpo(l2);
+  l->add_corpo(l3);
+  l->add_corpo(l4);
+  
   Fisica *f = new Fisica(lane);
 
   Tela *tela = new Tela(player, lane, 50, 50, 50, 50);
