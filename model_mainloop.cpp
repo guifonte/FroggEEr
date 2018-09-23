@@ -12,7 +12,8 @@ uint64_t get_now_ms() {
 
 int main ()
 {
-  Corpo *c1 = new Corpo(10, 30, 10, 100, 3);
+  Player *player = new Player(10, 10);
+  /*Corpo *c1 = new Corpo(10, 30, 10, 100, 3);
   Corpo *c2 = new Corpo(10, 20, 10, 50, 0);
   Corpo *c3 = new Corpo(10, 50, 10, 20, 1.5);
   Corpo *c4 = new Corpo(10, 10, 10, 100, 0.3);
@@ -31,9 +32,9 @@ int main ()
   l->add_corpo(c7);
   l->add_corpo(c8);
 
-  Fisica *f = new Fisica(l);
+  Fisica *f = new Fisica(l);*/
 
-  Tela *tela = new Tela(l, 20, 20, 20, 20);
+  Tela *tela = new Tela(player, 20, 20, 20, 20);
   tela->init();
 
   Teclado *teclado = new Teclado();
@@ -56,13 +57,29 @@ int main ()
     deltaT = t1-t0;
 
     // Atualiza modelo
-    f->update(deltaT);
+    //f->update(deltaT);
 
     // Atualiza tela
     tela->update();
 
-    // Lê o teclado
     char c = teclado->getchar();
+    if (c=='w') {
+      player->update(player->getX()-1,player->getY());
+    }
+    if (c=='a') {
+      player->update(player->getX(),player->getY()-1);
+    }
+    if (c=='s') {
+      player->update(player->getX()+1,player->getY());
+    }
+    if (c=='d') {
+      player->update(player->getX(),player->getY()+1);
+    }
+    if (c=='q') {
+      break;
+    }
+    // Lê o teclado
+    /*char c = teclado->getchar();
     if (c=='s') {
       f->choque(forca);
     }
@@ -77,7 +94,7 @@ int main ()
     }
     if (c=='q') {
       break;
-    }
+    }*/
 
     // Condicao de parada
     if ( (t1-T) > 1000000 ) break;
