@@ -56,10 +56,9 @@ int main ()
     t0 = t1;
     t1 = get_now_ms();
     deltaT = t1-t0;
-    printf("%lu ",lane->content.size());
     // Atualiza modelo
     f->update(deltaT);
-
+    printf("%f",lane->getPos());
     // Atualiza tela
     tela->update();
 
@@ -80,23 +79,7 @@ int main ()
       break;
     }
     // Lê o teclado
-    /*char c = teclado->getchar();
-    if (c=='s') {
-      f->choque(forca);
-    }
-    if (c=='w') {
-      f->choque(-forca);
-    }
-    if (c=='+') {
-      forca += 100;
-    }
-    if (c=='-') {
-      forca -= 100;
-    }
-    if (c=='q') {
-      break;
-    }*/
-
+   
     // Condicao de parada
     if ( (t1-T) > 1000000 ) break;
 

@@ -53,43 +53,43 @@ Lane::Lane(int x, int nivel) {
   switch(random) {
     case 0:
       this->content = "     <<<<<<<<          <<<<<<<<<       <<<<<<<<<<<";	
-      this->velocidade = nivel * 5;
+      this->velocidade = nivel * 10;
       break;
     case 1:
       this->content = "     <<<<              <<<             <<<<<<<    ";
-      this->velocidade = nivel * 5;
+      this->velocidade = nivel * 10;
       break;
     case 2:
       this->content = "     <<<<<<<<                          <<<<<<<<<<<";
-      this->velocidade = nivel * 5;
+      this->velocidade = nivel * 10;
       break;	
     case 3:
       this->content = "     <<<<<<<<                          <<<<<<<<<<<";
-      this->velocidade = nivel * 1;
+      this->velocidade = nivel * 2;
       break;	
     case 4:
       this->content = "                   <<<<<<<<<           <<<<<<<<<<<";
-      this->velocidade = nivel * 1;
+      this->velocidade = nivel * 2;
       break;	
     case 5:
       this->content = "     <<<<<<<<          <<<<<<<<<                  ";
-      this->velocidade = nivel * 3;
+      this->velocidade = nivel * 6;
       break;	
     case 6:
       this->content = "                                       <<<<<<<<<<<";
-      this->velocidade = nivel * 3;
+      this->velocidade = nivel * 6;
       break;
     case 7:
       this->content = "     <<<<<<<<         <<<<<<<<<<<<<<<<<<<<        ";
-      this->velocidade = nivel * 2;
+      this->velocidade = nivel * 4;
       break;	
     case 8:
       this->content = "          <<<<<<<<<<<          <<     <<<<<<<     ";
-      this->velocidade = nivel * 2;
+      this->velocidade = nivel * 4;
       break;	
     case 9:
       this->content = "     <<<<<<<<          <<<             <<<<<<<<<<<";
-      this->velocidade = nivel * 2;
+      this->velocidade = nivel * 4;
       break;
   }
 }
@@ -241,14 +241,14 @@ void Tela::update() {
 
   // Apaga lane da tela
 
-  for(int i = 0; i<50; i++) {
+  for(int i = 0; i<this->lane->content.size(); i++) {
     move(this->lane->getX(),i);
     echochar(' ');
   }
 
   // Desenha lane na tela
-  for(int i = 0; i<50; i++) {
-    if(i>this->lane->content.size()) {
+  for(int i = 0; i<this->lane->content.size(); i++) {
+    if(laneDrawPos>=this->lane->content.size()) {
       lanePosOverflow = 1;
       laneDrawPos = 0;
     } 
@@ -260,7 +260,7 @@ void Tela::update() {
     }
     
     move(this->lane->getX(),laneDrawPos);
-    echochar(this->lane->content[laneDrawPos]);
+    echochar(this->lane->content[i]);
   }
 
   // Apaga player na tela
