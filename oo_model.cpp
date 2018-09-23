@@ -38,6 +38,10 @@ float Lane::getPos() {
   return this->pos;
 }
 
+int Lane::getNivel() {
+  return this->nivel;
+}
+
 float Lane::getSpeed() {
   return this->velocidade;
 }
@@ -49,6 +53,7 @@ int Lane::getX() {
 Lane::Lane(int x, int nivel) {
   this->x=x;
   this->pos=0;
+  this->nivel=nivel;
 
   srand(time(NULL));
   int random = rand()%(10);
@@ -139,35 +144,35 @@ float Corpo::get_amortecimento() {
 float Corpo::get_forca() {
   return this->forca;
 }
-
-ListaDeCorpos::ListaDeCorpos() {
-  this->corpos = new std::vector<Corpo *>(0);
+*/
+ListaDeLanes::ListaDeLanes() {
+  this->lanes = new std::vector<Lane *>(0);
 }
 
-void ListaDeCorpos::hard_copy(ListaDeCorpos *ldc) {
-  std::vector<Corpo *> *corpos = ldc->get_corpos();
+void ListaDeLanes::hard_copy(ListaDeLanes *ldl) {
+  std::vector<Lane *> *lanes = ldl->get_lanes();
 
-  for (int k=0; k<corpos->size(); k++) {
-    Corpo *c = new Corpo( (*corpos)[k]->get_massa(),\
-                          (*corpos)[k]->get_posicao(),\
-                          (*corpos)[k]->get_velocidade(),\
-                          (*corpos)[k]->get_elasticidade(),\
-                          (*corpos)[k]->get_amortecimento()
-                        );
-    this->add_corpo(c);
+  for (int k=0; k<lanes->size(); k++) {
+    Lane *l = new Lane( (*lanes)[k]->getX(),
+                          (*lanes)[k]->getNivel() );
+    this->add_lane(l);
   }
 }
 
-
-void ListaDeCorpos::add_corpo(Corpo *c) {
-  (this->corpos)->push_back(c);
+void ListaDeLanes::add_lane(Lane *l) {
+  (this->lanes)->push_back(l);
 }
 
-std::vector<Corpo*> *ListaDeCorpos::get_corpos() {
-  return (this->corpos);
+std::vector<Lane*> *ListaDeLanes::get_lanes() {
+  return (this->lanes);
 }
-*/
+<<<<<<< HEAD
+
 Fisica::Fisica(Lane *lane, Player *player) {
+=======
+
+Fisica::Fisica(Lane *lane) {
+>>>>>>> origin/create-multiple-lanes
   this->lane = lane;
   this->player = player;
 }
@@ -181,10 +186,9 @@ void Fisica::update(float deltaT) {
   lane->update(newPos);
 }
 
-int Fisica::hasTouched() {
-  
+int Fisica::hasTouched(){
   std::vector<Lane *> *l = this->lanes->getLanes();
-  for (int i = 0; i < (*l).size(); i++) {
+  for(int i = 0; i < (*l).size(); i++) {
     if((*l)[i]->getX() == player->getX()){
       if((*l)[i]->getContent()[(int)player->getY()] == '<'){
         return 1;
