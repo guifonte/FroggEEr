@@ -24,16 +24,16 @@ class Player {
   Obstaculo(float x, float comprimento);
   void update(float x);
 };
-
+*/
 class Lane {
   private:
-  float y;
+  int x;
+  float pos;
   float velocidade;
-  std::vector<Obstaculo*> *obstaculos;
-
   public:
-  Lane(float y, int nivel);
-};*/
+  char content[];
+  Lane(int y, int nivel);
+};
 
 
 

@@ -2,6 +2,7 @@
 #include <chrono>
 #include <thread>
 #include <iostream>
+#include <time.h> 
 
 #include "oo_model.hpp"
 
@@ -24,6 +25,67 @@ float Player::getX() {
 
 float Player::getY() {
   return this->y;
+}
+
+void Lane::update(float pos) {
+  this->pos=pos;
+}
+
+Lane::Lane(int x, int nivel) {
+  this->x=x;
+  this->pos=0;
+  srand(time(NULL));
+  int random = rand()%(10);
+  this->nivel=nivel;
+  switch(random) {
+    case 0:
+      this->content = "     <<<<<<<<          <<<<<<<<<       <<<<<<<<<<<";	
+      this->velocidade = nivel * 5;
+      break;
+    case 1:
+      this->content = "     <<<<              <<<             <<<<<<<    ";
+      this->velocidade = nivel * 5;
+      break;
+    case 2:
+      this->content = "     <<<<<<<<                          <<<<<<<<<<<";
+      this->velocidade = nivel * 5;
+      break;	
+    case 3:
+      this->content = "     <<<<<<<<                          <<<<<<<<<<<");
+      this->velocidade = nivel * 1;
+      break;	
+    case 4:
+      this->content = "                   <<<<<<<<<           <<<<<<<<<<<");
+      this->velocidade = nivel * 1;
+      this->nivel=velocidade;
+      break;	
+    case 5:
+      this->content = "     <<<<<<<<          <<<<<<<<<                  ");
+      this->nivel=velocidade;
+      this->velocidade = nivel * 3;
+      break;	
+    case 6:
+      this->content = "                                       <<<<<<<<<<<");
+      this->nivel=velocidade;
+      this->velocidade = nivel * 3;
+      break;
+    case 7:
+      this->content = "     <<<<<<<<         <<<<<<<<<<<<<<<<<<<<        ");
+      this->nivel=velocidade;
+      this->velocidade = nivel * 2;
+      break;	
+    case 8:
+      this->content = "          <<<<<<<<<<<          <<     <<<<<<<     ");
+      this->nivel=velocidade;
+      this->velocidade = nivel * 2;
+      break;	
+    case 9:
+      this->content = "     <<<<<<<<          <<<             <<<<<<<<<<<");
+      this->nivel=velocidade;
+      this->velocidade = nivel * 2;
+      break;
+  }
+    return 0;
 }
 
 /*Corpo::Corpo(float massa, float velocidade, float posicao, float elasticidade, float amortecimento) {
