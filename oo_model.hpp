@@ -3,6 +3,10 @@
 #define OO_MODEL_HPP
 
 #include <thread>
+#include <string>
+
+using namespace std;
+
 class Player {
   private:
   float x;
@@ -24,16 +28,20 @@ class Player {
   Obstaculo(float x, float comprimento);
   void update(float x);
 };
-
+*/
 class Lane {
   private:
-  float y;
+  int x;
+  float pos;
   float velocidade;
-  std::vector<Obstaculo*> *obstaculos;
-
   public:
-  Lane(float y, int nivel);
-};*/
+  string content;
+  Lane(int y, int nivel);
+  void update(float newPos);
+  float getPos();
+  int getX();
+  float getSpeed();
+};
 
 
 
@@ -70,27 +78,28 @@ class ListaDeCorpos {
     std::vector<Corpo*> *get_corpos();
 };*/
 
-/*class Fisica {
+class Fisica {
   private:
-    ListaDeCorpos *lista;
+    Lane *lane;
 
   public:
-    Fisica(ListaDeCorpos *ldc);
-    void add_corpo(Corpo *c);
-    void choque(float forca);
+    Fisica(Lane *lane);
+    //void add_lane(Corpo *c);
+    //void choque(float forca);
     void update(float deltaT);
-};*/
+};
 
 class Tela {
   private:
     //ListaDeCorpos *lista, *lista_anterior;
     Player *playerAtual, *playerAnterior;
+    Lane *lane;
     int maxI, maxJ;
     float maxX, maxY;
 
   public:
     //Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY);
-    Tela(Player *player, int maxI, int maxJ, float maxX, float maxY);
+    Tela(Player *player, Lane *lane, int maxI, int maxJ, float maxX, float maxY);
     ~Tela();
     void stop();
     void init();

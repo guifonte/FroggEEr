@@ -2,6 +2,8 @@
 #include <chrono>
 #include <thread>
 #include <iostream>
+#include <time.h> 
+#include <string>
 
 #include "oo_model.hpp"
 
@@ -24,6 +26,72 @@ float Player::getX() {
 
 float Player::getY() {
   return this->y;
+}
+
+void Lane::update(float newPos) {
+  this->pos=newPos;
+}
+
+float Lane::getPos() {
+  return this->pos;
+}
+
+float Lane::getSpeed() {
+  return this->velocidade;
+}
+
+int Lane::getX() {
+  return this->x;
+}
+
+Lane::Lane(int x, int nivel) {
+  this->x=x;
+  this->pos=0;
+
+  srand(time(NULL));
+  int random = rand()%(10);
+  switch(random) {
+    case 0:
+      this->content = "     <<<<<<<<          <<<<<<<<<       <<<<<<<<<<<";	
+      this->velocidade = nivel * 10;
+      break;
+    case 1:
+      this->content = "     <<<<              <<<             <<<<<<<    ";
+      this->velocidade = nivel * 10;
+      break;
+    case 2:
+      this->content = "     <<<<<<<<                          <<<<<<<<<<<";
+      this->velocidade = nivel * 10;
+      break;	
+    case 3:
+      this->content = "     <<<<<<<<                          <<<<<<<<<<<";
+      this->velocidade = nivel * 2;
+      break;	
+    case 4:
+      this->content = "                   <<<<<<<<<           <<<<<<<<<<<";
+      this->velocidade = nivel * 2;
+      break;	
+    case 5:
+      this->content = "     <<<<<<<<          <<<<<<<<<                  ";
+      this->velocidade = nivel * 6;
+      break;	
+    case 6:
+      this->content = "                                       <<<<<<<<<<<";
+      this->velocidade = nivel * 6;
+      break;
+    case 7:
+      this->content = "     <<<<<<<<         <<<<<<<<<<<<<<<<<<<<        ";
+      this->velocidade = nivel * 4;
+      break;	
+    case 8:
+      this->content = "          <<<<<<<<<<<          <<     <<<<<<<     ";
+      this->velocidade = nivel * 4;
+      break;	
+    case 9:
+      this->content = "     <<<<<<<<          <<<             <<<<<<<<<<<";
+      this->velocidade = nivel * 4;
+      break;
+  }
 }
 
 /*Corpo::Corpo(float massa, float velocidade, float posicao, float elasticidade, float amortecimento) {
@@ -96,25 +164,20 @@ void ListaDeCorpos::add_corpo(Corpo *c) {
 std::vector<Corpo*> *ListaDeCorpos::get_corpos() {
   return (this->corpos);
 }
-
-Fisica::Fisica(ListaDeCorpos *ldc) {
-  this->lista = ldc;
+*/
+Fisica::Fisica(Lane *lane) {
+  this->lane = lane;
 }
 
 void Fisica::update(float deltaT) {
   // Atualiza parametros dos corpos!
-  std::vector<Corpo *> *c = this->lista->get_corpos();
-
-  for (int i = 0; i < (*c).size(); i++) {
-    float forca_elastica = (-1) * (*c)[i]->get_elasticidade() * ((*c)[i]->get_posicao() - (*c)[i]->get_posicao_central());
-    float forca_amortecedor = (-1) * (*c)[i]->get_amortecimento() * (*c)[i]->get_velocidade();
-    float new_acel = ( forca_amortecedor + forca_elastica + (*c)[i]->get_forca() ) / (*c)[i]->get_massa();
-    float new_vel = (*c)[i]->get_velocidade() + (float)deltaT * new_acel/1000;
-    float new_pos = (*c)[i]->get_posicao() + (float)deltaT * new_vel/1000;
-    (*c)[i]->update(new_vel, new_pos, 0);
+  float newPos = this->lane->getPos() + (float)deltaT * this->lane->getSpeed()/1000;
+  if(newPos>50){
+    newPos=newPos-50;
   }
+  lane->update(newPos);
 }
-
+/*
 void Fisica::choque(float forca) {
   // Atualiza parametros dos corpos!
   std::vector<Corpo *> *c = this->lista->get_corpos();
@@ -135,8 +198,9 @@ void Fisica::choque(float forca) {
   this->maxY = maxY;
 }*/
 
-Tela::Tela(Player *player, int maxI, int maxJ, float maxX, float maxY) {
+Tela::Tela(Player *player, Lane *lane, int maxI, int maxJ, float maxX, float maxY) {
   this->playerAtual = player;
+  this->lane = lane;
   this->playerAnterior = new Player(0, 0);
   this->playerAnterior->update(player->getX(),player->getY());
   this->maxI = maxI;
@@ -155,6 +219,9 @@ void Tela::update() {
   int playerI;
   int playerJ;
 
+  int laneStartPos = this->lane->getPos();
+  int laneDrawPos = laneStartPos;
+  int lanePosOverflow = 0;
   int n_cols;
   int n_lines;
 
@@ -173,6 +240,30 @@ void Tela::update() {
   //    echochar(' ');  /* Prints character, advances a position */
   //  }
   //}
+
+  // Apaga lane da tela
+
+  for(int i = 0; i<this->lane->content.size(); i++) {
+    move(this->lane->getX(),i);
+    echochar(' ');
+  }
+
+  // Desenha lane na tela
+  for(int i = 0; i<this->lane->content.size(); i++) {
+    if(laneDrawPos>=this->lane->content.size()) {
+      lanePosOverflow = 1;
+      laneDrawPos = 0;
+    } 
+
+    if(lanePosOverflow == 0) {
+      laneDrawPos = i + laneStartPos;
+    } else {
+      laneDrawPos++;
+    }
+    
+    move(this->lane->getX(),laneDrawPos);
+    echochar(this->lane->content[i]);
+  }
 
   // Apaga player na tela
 
