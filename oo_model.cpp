@@ -100,21 +100,14 @@ std::vector<Corpo*> *ListaDeCorpos::get_corpos() {
 Fisica::Fisica(ListaDeCorpos *ldc) {
   this->lista = ldc;
 }
-
+*/
 void Fisica::update(float deltaT) {
   // Atualiza parametros dos corpos!
-  std::vector<Corpo *> *c = this->lista->get_corpos();
-
-  for (int i = 0; i < (*c).size(); i++) {
-    float forca_elastica = (-1) * (*c)[i]->get_elasticidade() * ((*c)[i]->get_posicao() - (*c)[i]->get_posicao_central());
-    float forca_amortecedor = (-1) * (*c)[i]->get_amortecimento() * (*c)[i]->get_velocidade();
-    float new_acel = ( forca_amortecedor + forca_elastica + (*c)[i]->get_forca() ) / (*c)[i]->get_massa();
-    float new_vel = (*c)[i]->get_velocidade() + (float)deltaT * new_acel/1000;
-    float new_pos = (*c)[i]->get_posicao() + (float)deltaT * new_vel/1000;
-    (*c)[i]->update(new_vel, new_pos, 0);
-  }
+  Lane *c = this->lane;
+  float newPos = this->lane->getPos + (float)deltaT * this->lane->getSpeed/1000;
+  lane->update(newPos);
 }
-
+/*
 void Fisica::choque(float forca) {
   // Atualiza parametros dos corpos!
   std::vector<Corpo *> *c = this->lista->get_corpos();
@@ -155,6 +148,9 @@ void Tela::update() {
   int playerI;
   int playerJ;
 
+  int laneStartPos = this->lane->getPos();
+  int laneDrawPos;
+  int lanePosOverflow = 0;
   int n_cols;
   int n_lines;
 
@@ -173,6 +169,30 @@ void Tela::update() {
   //    echochar(' ');  /* Prints character, advances a position */
   //  }
   //}
+
+  // Apaga lane da tela
+
+  for(int i = 0; i<this->lane->content->size; i++) {
+    move(this->lane->getX(),i);
+    echochar(' ');
+  }
+
+  // Desenha lane na tela
+  for(int i = 0; i<this->lane->content->size; i++) {
+    if(i>n_cols) {
+      lanePosOverflow = 1;
+      laneDrawPos = 0;
+    } 
+
+    if(lanePosOverflow == 0) {
+      laneDrawPos = i + laneStartPos;
+    } else {
+      laneDrawPos++;
+    }
+    
+    move(this->lane->getX(),laneDrawPos);
+    echochar(this->lane->content[i]);
+  }
 
   // Apaga player na tela
 
