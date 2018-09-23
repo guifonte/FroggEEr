@@ -11,6 +11,8 @@
 using namespace std::chrono;
 
 Player::Player(float x, float y) {
+  this->startX = x;
+  this->startY = y;
   this->x = x;
   this->y = y;
 }
@@ -165,8 +167,9 @@ std::vector<Corpo*> *ListaDeCorpos::get_corpos() {
   return (this->corpos);
 }
 */
-Fisica::Fisica(Lane *lane) {
+Fisica::Fisica(Lane *lane, Player *player) {
   this->lane = lane;
+  this->player = player;
 }
 
 void Fisica::update(float deltaT) {
@@ -177,16 +180,21 @@ void Fisica::update(float deltaT) {
   }
   lane->update(newPos);
 }
-/*
-void Fisica::choque(float forca) {
-  // Atualiza parametros dos corpos!
-  std::vector<Corpo *> *c = this->lista->get_corpos();
-  for (int i = 0; i < (*c).size(); i++) {
-    float new_vel = (*c)[i]->get_velocidade();
-    float new_pos = (*c)[i]->get_posicao();
-    (*c)[i]->update(new_vel, new_pos, forca);
+
+int Fisica::hasTouched() {
+  
+  std::vector<Lane *> *l = this->lanes->getLanes();
+  for (int i = 0; i < (*l).size(); i++) {
+    if((*l)[i]->getX() == player->getX()){
+      if((*l)[i]->getContent()[(int)player->getY()] == '<'){
+        return 1;
+      } else {
+        return 0;
+      }
+    }
   }
-}*/
+  return 0;
+}
 
 /*Tela::Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY) {
   this->lista = ldc;

@@ -9,12 +9,15 @@ using namespace std;
 
 class Player {
   private:
+  float startX;
+  float startY;
   float x;
   float y;
 
   public:
   Player(float x, float y);
   void update(float newX,float newY);
+  void resetPos();
   float getX();
   float getY();
 };
@@ -81,11 +84,12 @@ class ListaDeCorpos {
 class Fisica {
   private:
     Lane *lane;
+    Player *player;
 
   public:
-    Fisica(Lane *lane);
+    Fisica(Lane *lane, Player *player);
     //void add_lane(Corpo *c);
-    //void choque(float forca);
+    int hasTouched();
     void update(float deltaT);
 };
 

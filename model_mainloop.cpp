@@ -33,7 +33,7 @@ int main ()
   l->add_corpo(c7);
   l->add_corpo(c8);
   */
-  Fisica *f = new Fisica(lane);
+  Fisica *f = new Fisica(lane,player);
 
   Tela *tela = new Tela(player, lane, 50, 50, 50, 50);
   tela->init();
@@ -47,6 +47,7 @@ int main ()
   uint64_t T;
 
   int i = 0;
+  int touched = 0;
   float forca = 100;
 
   T = get_now_ms();
@@ -58,9 +59,11 @@ int main ()
     deltaT = t1-t0;
     // Atualiza modelo
     f->update(deltaT);
+    touched = f->hasTouched();
     // Atualiza tela
     tela->update();
 
+    // Lê o teclado
     char c = teclado->getchar();
     if (c=='w') {
       player->update(player->getX()-1,player->getY());
@@ -77,7 +80,10 @@ int main ()
     if (c=='q') {
       break;
     }
-    // Lê o teclado
+    
+    if(touched = 1){
+      player->resetPos();
+    }
    
     // Condicao de parada
     if ( (t1-T) > 1000000 ) break;
