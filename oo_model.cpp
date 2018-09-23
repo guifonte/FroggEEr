@@ -171,8 +171,10 @@ Fisica::Fisica(Lane *lane) {
 
 void Fisica::update(float deltaT) {
   // Atualiza parametros dos corpos!
-  Lane *c = this->lane;
   float newPos = this->lane->getPos() + (float)deltaT * this->lane->getSpeed()/1000;
+  if(newPos>50){
+    newPos=newPos-50;
+  }
   lane->update(newPos);
 }
 /*
@@ -218,7 +220,7 @@ void Tela::update() {
   int playerJ;
 
   int laneStartPos = this->lane->getPos();
-  int laneDrawPos;
+  int laneDrawPos = laneStartPos;
   int lanePosOverflow = 0;
   int n_cols;
   int n_lines;

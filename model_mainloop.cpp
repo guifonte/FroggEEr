@@ -58,7 +58,6 @@ int main ()
     deltaT = t1-t0;
     // Atualiza modelo
     f->update(deltaT);
-    printf("%f",lane->getPos());
     // Atualiza tela
     tela->update();
 
