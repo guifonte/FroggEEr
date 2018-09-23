@@ -3,6 +3,10 @@
 #define OO_MODEL_HPP
 
 #include <thread>
+#include <string>
+
+using namespace std;
+
 class Player {
   private:
   float x;
@@ -31,8 +35,12 @@ class Lane {
   float pos;
   float velocidade;
   public:
-  char content[];
+  string content;
   Lane(int y, int nivel);
+  void update(float newPos);
+  float getPos();
+  int getX();
+  float getSpeed();
 };
 
 

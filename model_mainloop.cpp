@@ -13,6 +13,7 @@ uint64_t get_now_ms() {
 int main ()
 {
   Player *player = new Player(10, 10);
+  Lane *lane = new Lane(9,1);
   /*Corpo *c1 = new Corpo(10, 30, 10, 100, 3);
   Corpo *c2 = new Corpo(10, 20, 10, 50, 0);
   Corpo *c3 = new Corpo(10, 50, 10, 20, 1.5);
@@ -31,10 +32,10 @@ int main ()
   l->add_corpo(c6);
   l->add_corpo(c7);
   l->add_corpo(c8);
+  */
+  Fisica *f = new Fisica(lane);
 
-  Fisica *f = new Fisica(l);*/
-
-  Tela *tela = new Tela(player, 20, 20, 20, 20);
+  Tela *tela = new Tela(player, lane, 50, 50, 50, 50);
   tela->init();
 
   Teclado *teclado = new Teclado();
@@ -55,9 +56,9 @@ int main ()
     t0 = t1;
     t1 = get_now_ms();
     deltaT = t1-t0;
-
+    printf("%lu ",lane->content.size());
     // Atualiza modelo
-    //f->update(deltaT);
+    f->update(deltaT);
 
     // Atualiza tela
     tela->update();
