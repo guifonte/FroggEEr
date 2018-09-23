@@ -12,35 +12,26 @@ uint64_t get_now_ms() {
 
 int main ()
 {
-  Player *player = new Player(10, 10);
-  Lane *l1 = new Lane(9,1);
-  Lane *l2 = new Lane(10,3);
-  Lane *l3 = new Lane(11,5);
-  Lane *l4 = new Lane(12,7);
+  srand(time(NULL));
+  Player *player = new Player(13, 25);
+  Lane *l1 = new Lane(7,4);
+  Lane *l2 = new Lane(8,2);
+  Lane *l3 = new Lane(9,3);
+  Lane *l4 = new Lane(10,2);
+  Lane *l5 = new Lane(11,1);
+  Lane *l6 = new Lane(12,1);
 
-<<<<<<< HEAD
-  ListaDeCorpos *l = new ListaDeCorpos();
-  l->add_corpo(c1);
-  l->add_corpo(c2);
-  l->add_corpo(c3);
-  l->add_corpo(c4);
-  l->add_corpo(c5);
-  l->add_corpo(c6);
-  l->add_corpo(c7);
-  l->add_corpo(c8);
-  */
-  Fisica *f = new Fisica(lane,player);
-=======
   ListaDeLanes *l = new ListaDeLanes();
-  l->add_corpo(l1);
-  l->add_corpo(l2);
-  l->add_corpo(l3);
-  l->add_corpo(l4);
-  
-  Fisica *f = new Fisica(lane);
->>>>>>> origin/create-multiple-lanes
+  l->addLane(l1);
+  l->addLane(l2);
+  l->addLane(l3);
+  l->addLane(l4);
+  l->addLane(l5);
+  l->addLane(l6);
 
-  Tela *tela = new Tela(player, lane, 50, 50, 50, 50);
+  Fisica *f = new Fisica(l,player);
+
+  Tela *tela = new Tela(player, l, 50, 50, 50, 50);
   tela->init();
 
   Teclado *teclado = new Teclado();
@@ -86,8 +77,9 @@ int main ()
       break;
     }
     
-    if(touched = 1){
+    if(touched == 1){
       player->resetPos();
+      touched = 0;
     }
    
     // Condicao de parada

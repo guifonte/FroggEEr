@@ -30,6 +30,11 @@ float Player::getY() {
   return this->y;
 }
 
+void Player::resetPos(){
+  this->x = this->startX;
+  this->y = this->startY;
+}
+
 void Lane::update(float newPos) {
   this->pos=newPos;
 }
@@ -50,151 +55,120 @@ int Lane::getX() {
   return this->x;
 }
 
+string Lane::getContent() {
+  return this->content;
+}
+
 Lane::Lane(int x, int nivel) {
   this->x=x;
   this->pos=0;
   this->nivel=nivel;
 
-  srand(time(NULL));
   int random = rand()%(10);
   switch(random) {
     case 0:
       this->content = "     <<<<<<<<          <<<<<<<<<       <<<<<<<<<<<";	
-      this->velocidade = nivel * 10;
+      this->velocidade = nivel * 5;
       break;
     case 1:
       this->content = "     <<<<              <<<             <<<<<<<    ";
-      this->velocidade = nivel * 10;
+      this->velocidade = nivel * 5;
       break;
     case 2:
       this->content = "     <<<<<<<<                          <<<<<<<<<<<";
-      this->velocidade = nivel * 10;
+      this->velocidade = nivel * 5;
       break;	
     case 3:
       this->content = "     <<<<<<<<                          <<<<<<<<<<<";
-      this->velocidade = nivel * 2;
+      this->velocidade = nivel * 1;
       break;	
     case 4:
       this->content = "                   <<<<<<<<<           <<<<<<<<<<<";
-      this->velocidade = nivel * 2;
+      this->velocidade = nivel * 1;
       break;	
     case 5:
       this->content = "     <<<<<<<<          <<<<<<<<<                  ";
-      this->velocidade = nivel * 6;
+      this->velocidade = nivel * 3;
       break;	
     case 6:
       this->content = "                                       <<<<<<<<<<<";
-      this->velocidade = nivel * 6;
+      this->velocidade = nivel * 3;
       break;
     case 7:
       this->content = "     <<<<<<<<         <<<<<<<<<<<<<<<<<<<<        ";
-      this->velocidade = nivel * 4;
+      this->velocidade = nivel * 2;
       break;	
     case 8:
       this->content = "          <<<<<<<<<<<          <<     <<<<<<<     ";
-      this->velocidade = nivel * 4;
+      this->velocidade = nivel * 2;
       break;	
     case 9:
       this->content = "     <<<<<<<<          <<<             <<<<<<<<<<<";
-      this->velocidade = nivel * 4;
+      this->velocidade = nivel * 2;
       break;
   }
 }
 
-/*Corpo::Corpo(float massa, float velocidade, float posicao, float elasticidade, float amortecimento) {
-  this->massa = massa;
-  this->velocidade = velocidade;
-  this->posicao = posicao;
-  this->posicao_central = posicao;
-  this->elasticidade = elasticidade;
-  this->amortecimento = amortecimento;
-  this->forca = 0;
-}
-
-void Corpo::update(float nova_velocidade, float nova_posicao, float nova_forca) {
-  this->velocidade = nova_velocidade;
-  this->posicao = nova_posicao;
-  this->forca = nova_forca;
-}
-
-float Corpo::get_massa() {
-  return this->massa;
-}
-
-float Corpo::get_velocidade() {
-  return this->velocidade;
-}
-
-float Corpo::get_posicao() {
-  return this->posicao;
-}
-
-float Corpo::get_posicao_central() {
-  return this->posicao_central;
-}
-
-float Corpo::get_elasticidade() {
-  return this->elasticidade;
-}
-
-float Corpo::get_amortecimento() {
-  return this->amortecimento;
-}
-
-float Corpo::get_forca() {
-  return this->forca;
-}
-*/
 ListaDeLanes::ListaDeLanes() {
   this->lanes = new std::vector<Lane *>(0);
 }
 
 void ListaDeLanes::hard_copy(ListaDeLanes *ldl) {
-  std::vector<Lane *> *lanes = ldl->get_lanes();
+  std::vector<Lane *> *lanes = ldl->getLanes();
 
   for (int k=0; k<lanes->size(); k++) {
     Lane *l = new Lane( (*lanes)[k]->getX(),
                           (*lanes)[k]->getNivel() );
-    this->add_lane(l);
+    this->addLane(l);
   }
 }
 
-void ListaDeLanes::add_lane(Lane *l) {
+void ListaDeLanes::addLane(Lane *l) {
   (this->lanes)->push_back(l);
 }
 
-std::vector<Lane*> *ListaDeLanes::get_lanes() {
+std::vector<Lane*> *ListaDeLanes::getLanes() {
   return (this->lanes);
 }
-<<<<<<< HEAD
 
-Fisica::Fisica(Lane *lane, Player *player) {
-=======
-
-Fisica::Fisica(Lane *lane) {
->>>>>>> origin/create-multiple-lanes
-  this->lane = lane;
+Fisica::Fisica(ListaDeLanes *lanes, Player *player) {
+  this->lanes = lanes;
   this->player = player;
 }
 
 void Fisica::update(float deltaT) {
-  // Atualiza parametros dos corpos!
-  float newPos = this->lane->getPos() + (float)deltaT * this->lane->getSpeed()/1000;
-  if(newPos>50){
-    newPos=newPos-50;
+  // Atualiza parametros das lanes!
+  std::vector<Lane *> *l = this->lanes->getLanes();
+  for(int i = 0; i < (*l).size(); i++) {
+    float newPos = (*l)[i]->getPos() + (float)deltaT * (*l)[i]->getSpeed()/1000;
+    if(newPos>50){
+      newPos=newPos-50;
+    }
+    (*l)[i]->update(newPos);
+    //printf("%d %f / ",(*l)[i]->getX() ,(*l)[i]->getPos());
   }
-  lane->update(newPos);
+  //printf("\n");
 }
 
 int Fisica::hasTouched(){
   std::vector<Lane *> *l = this->lanes->getLanes();
   for(int i = 0; i < (*l).size(); i++) {
     if((*l)[i]->getX() == player->getX()){
-      if((*l)[i]->getContent()[(int)player->getY()] == '<'){
-        return 1;
+      if(player->getY()>=(*l)[i]->getPos()){
+        if((*l)[i]->getContent()[(int)player->getY() - (*l)[i]->getPos()] == '<'){
+          return 1;
+        } else {
+          return 0;
+        }
       } else {
-        return 0;
+        if((*l)[i]->getContent()[(*l)[i]->content.size() - (*l)[i]->getPos() + (int)player->getY()] == '<'){
+          return 1;
+        } else {
+          return 0;
+        }
       }
+
+
     }
   }
   return 0;
@@ -210,9 +184,9 @@ int Fisica::hasTouched(){
   this->maxY = maxY;
 }*/
 
-Tela::Tela(Player *player, Lane *lane, int maxI, int maxJ, float maxX, float maxY) {
+Tela::Tela(Player *player, ListaDeLanes *lanes, int maxI, int maxJ, float maxX, float maxY) {
   this->playerAtual = player;
-  this->lane = lane;
+  this->lanes = lanes;
   this->playerAnterior = new Player(0, 0);
   this->playerAnterior->update(player->getX(),player->getY());
   this->maxI = maxI;
@@ -231,50 +205,46 @@ void Tela::update() {
   int playerI;
   int playerJ;
 
-  int laneStartPos = this->lane->getPos();
-  int laneDrawPos = laneStartPos;
-  int lanePosOverflow = 0;
+  int laneStartPos;
+  int laneDrawPos;
+  int lanePosOverflow;
   int n_cols;
   int n_lines;
 
   getmaxyx(stdscr,n_lines,n_cols); /*size of the terminal*/
 
-  //std::vector<Corpo *> *corpos_old = this->lista_anterior->get_corpos();
 
-  // Apaga corpos na tela
-  //for (int k=0; k<corpos_old->size(); k++)
-  //{
-  //  i = (int) ((*corpos_old)[k]->get_posicao()) * \
-  //      (this->maxI / this->maxX);
-  //
-  //  if((i < n_lines) && (k < n_cols) && (i > 0)){ /*Check if inside the terminal window*/
-  //    move(i, k);   /* Move cursor to position */
-  //    echochar(' ');  /* Prints character, advances a position */
-  //  }
-  //}
-
-  // Apaga lane da tela
-
-  for(int i = 0; i<this->lane->content.size(); i++) {
-    move(this->lane->getX(),i);
-    echochar(' ');
+  // Apaga lanes da tela
+  std::vector<Lane *> *l = this->lanes->getLanes();
+  for(int i = 0; i < (*l).size(); i++) {
+      for(int j = 0; j<(*l)[i]->content.size(); j++) {
+        move((*l)[i]->getX(),j);
+        echochar(' ');
+      }
   }
 
-  // Desenha lane na tela
-  for(int i = 0; i<this->lane->content.size(); i++) {
-    if(laneDrawPos>=this->lane->content.size()) {
-      lanePosOverflow = 1;
-      laneDrawPos = 0;
-    } 
 
-    if(lanePosOverflow == 0) {
-      laneDrawPos = i + laneStartPos;
-    } else {
-      laneDrawPos++;
+  // Desenha lanes na tela
+  for(int i = 0; i < (*l).size(); i++) {
+    laneStartPos = (*l)[i]->getPos();
+    laneDrawPos = laneStartPos;
+    lanePosOverflow = 0;
+
+    for(int j = 0; j<(*l)[i]->content.size(); j++) {
+      if(laneDrawPos >= (*l)[i]->content.size()) {
+        lanePosOverflow = 1;
+        laneDrawPos = 0;
+      } 
+
+      if(lanePosOverflow == 0) {
+        laneDrawPos = j + laneStartPos;
+      } else {
+        laneDrawPos++;
+      }
+      
+      move((*l)[i]->getX(),laneDrawPos);
+      echochar((*l)[i]->content[j]);
     }
-    
-    move(this->lane->getX(),laneDrawPos);
-    echochar(this->lane->content[i]);
   }
 
   // Apaga player na tela

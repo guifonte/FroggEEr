@@ -42,10 +42,12 @@ class Lane {
   string content;
   Lane(int y, int nivel);
   void update(float newPos);
+  void resetPos();
   float getPos();
   int getNivel();
   int getX();
   float getSpeed();
+  string getContent();
 };
 
 
@@ -79,17 +81,17 @@ class ListaDeLanes {
   public:
     ListaDeLanes();
     void hard_copy(ListaDeLanes *ldl);
-    void add_lane(Lane *l);
-    std::vector<Lane*> *get_lanes();
+    void addLane(Lane *l);
+    std::vector<Lane*> *getLanes();
 };
 
 class Fisica {
   private:
-    Lane *lane;
+    ListaDeLanes *lanes;
     Player *player;
 
   public:
-    Fisica(Lane *lane, Player *player);
+    Fisica(ListaDeLanes *lanes, Player *player);
     //void add_lane(Corpo *c);
     int hasTouched();
     void update(float deltaT);
@@ -99,13 +101,13 @@ class Tela {
   private:
     //ListaDeCorpos *lista, *lista_anterior;
     Player *playerAtual, *playerAnterior;
-    Lane *lane;
+    ListaDeLanes *lanes;
     int maxI, maxJ;
     float maxX, maxY;
 
   public:
     //Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY);
-    Tela(Player *player, Lane *lane, int maxI, int maxJ, float maxX, float maxY);
+    Tela(Player *player, ListaDeLanes *lanes, int maxI, int maxJ, float maxX, float maxY);
     ~Tela();
     void stop();
     void init();
