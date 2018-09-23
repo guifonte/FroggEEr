@@ -8,7 +8,25 @@
 #include <ncurses.h>
 using namespace std::chrono;
 
-Corpo::Corpo(float massa, float velocidade, float posicao, float elasticidade, float amortecimento) {
+Player::Player(float x, float y) {
+  this->x = x;
+  this->y = y;
+}
+
+void Player::update(float newX, float newY) {
+  this->x = newX;
+  this->y = newY;
+}
+
+float Player::getX() {
+  return this->x;
+}
+
+float Player::getY() {
+  return this->y;
+}
+
+/*Corpo::Corpo(float massa, float velocidade, float posicao, float elasticidade, float amortecimento) {
   this->massa = massa;
   this->velocidade = velocidade;
   this->posicao = posicao;
@@ -105,12 +123,22 @@ void Fisica::choque(float forca) {
     float new_pos = (*c)[i]->get_posicao();
     (*c)[i]->update(new_vel, new_pos, forca);
   }
-}
+}*/
 
-Tela::Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY) {
+/*Tela::Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY) {
   this->lista = ldc;
   this->lista_anterior = new ListaDeCorpos();
   this->lista_anterior->hard_copy(this->lista);
+  this->maxI = maxI;
+  this->maxJ = maxJ;
+  this->maxX = maxX;
+  this->maxY = maxY;
+}*/
+
+Tela::Tela(Player *player, int maxI, int maxJ, float maxX, float maxY) {
+  this->playerAtual = player;
+  this->playerAnterior = new Player(0, 0);
+  this->playerAnterior->update(player->getX(),player->getY());
   this->maxI = maxI;
   this->maxJ = maxJ;
   this->maxX = maxX;
@@ -124,46 +152,89 @@ void Tela::init() {
 }
 
 void Tela::update() {
-  int i;
+  int playerI;
+  int playerJ;
 
   int n_cols;
   int n_lines;
 
   getmaxyx(stdscr,n_lines,n_cols); /*size of the terminal*/
 
-  std::vector<Corpo *> *corpos_old = this->lista_anterior->get_corpos();
+  //std::vector<Corpo *> *corpos_old = this->lista_anterior->get_corpos();
 
   // Apaga corpos na tela
-  for (int k=0; k<corpos_old->size(); k++)
-  {
-    i = (int) ((*corpos_old)[k]->get_posicao()) * \
+  //for (int k=0; k<corpos_old->size(); k++)
+  //{
+  //  i = (int) ((*corpos_old)[k]->get_posicao()) * \
+  //      (this->maxI / this->maxX);
+  //
+  //  if((i < n_lines) && (k < n_cols) && (i > 0)){ /*Check if inside the terminal window*/
+  //    move(i, k);   /* Move cursor to position */
+  //    echochar(' ');  /* Prints character, advances a position */
+  //  }
+  //}
+
+  // Apaga player na tela
+
+  playerI = (int) (this->playerAnterior->getX()) * \
         (this->maxI / this->maxX);
 
-    if((i < n_lines) && (k < n_cols) && (i > 0)){ /*Check if inside the terminal window*/
-      move(i, k);   /* Move cursor to position */
-      echochar(' ');  /* Prints character, advances a position */
-    }
+  playerJ = (int) (this->playerAnterior->getY()) * \
+        (this->maxJ / this->maxY);
+
+  /*for(int i=10;i>=0;i--){
+    move(0, i);
+    echochar(' ');
+  }
+  printf("%d %d\n",playerI,playerJ);*/
+
+  if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
+    move(playerI, playerJ);   /* Move cursor to position */
+    echochar(' ');  /* Prints character, advances a position */
   }
 
-  // Desenha corpos na tela
-  std::vector<Corpo *> *corpos = this->lista->get_corpos();
+  // Desenha player na tela
 
-  for (int k=0; k<corpos->size(); k++)
-  {
-    i = (int) ((*corpos)[k]->get_posicao()) * \
+  playerI = (int) (this->playerAtual->getX()) * \
         (this->maxI / this->maxX);
 
-    if((i < n_lines) && (k < n_cols) && (i > 0)){ /*Check if inside the terminal window*/
-      move(i, k);   /* Move cursor to position */
-      echochar('*');  /* Prints character, advances a position */
-    }
+  playerJ = (int) (this->playerAtual->getY()) * \
+        (this->maxJ / this->maxY);
+
+  /*for(int i=10;i>=0;i--){
+    move(1, i);
+    echochar(' ');
+  }
+  printf("%d %d\n",playerI,playerJ);*/
+
+  if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
+    move(playerI, playerJ);   /* Move cursor to position */
+    echochar('*');  /* Prints character, advances a position */
+  }
+
+  // Atualiza player
+  
+  this->playerAnterior->update(this->playerAtual->getX(), this->playerAtual->getY());
+  /*printf("%f %f ", this->playerAnterior->getX(), this->playerAnterior->getY());*/
+  // Desenha corpos na tela
+  //std::vector<Corpo *> *corpos = this->lista->get_corpos();
+
+  //for (int k=0; k<corpos->size(); k++)
+  //{
+  //  i = (int) ((*corpos)[k]->get_posicao()) * \
+  //      (this->maxI / this->maxX);
+  //
+  //  if((i < n_lines) && (k < n_cols) && (i > 0)){ /*Check if inside the terminal window*/
+  //    move(i, k);   /* Move cursor to position */
+  //    echochar('*');  /* Prints character, advances a position */
+  //  }
 
 
     // Atualiza corpos antigos
-    (*corpos_old)[k]->update(  (*corpos)[k]->get_velocidade(),\
-                               (*corpos)[k]->get_posicao(),\
-                               (*corpos)[k]->get_forca());
-  }
+  //  (*corpos_old)[k]->update(  (*corpos)[k]->get_velocidade(),\
+  //                             (*corpos)[k]->get_posicao(),\
+  //                             (*corpos)[k]->get_forca());
+  //}
 
   // Atualiza tela
   refresh();
