@@ -8,5 +8,5 @@ cd FroggEEr
 make
 ./model
 ```
-
+To move your star, use the `wasd` keys.
 To quit the game, press `q` and then `Ctrl+C`
