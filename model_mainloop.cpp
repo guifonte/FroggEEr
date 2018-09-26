@@ -13,8 +13,12 @@ uint64_t get_now_ms() {
 int main ()
 {
   srand(time(NULL));
+
   int winX = 15;
   int winY = 51;
+
+  showStartFrog();
+
 
   //1 because of the botton besel and 2 because of the start safe zone
   int laneStartX = winX-3; 
@@ -98,10 +102,12 @@ int main ()
     cPrev = c;
 
     // Verifica se tocou em algum bloco
+
     if(touched == 1){
       player->resetPos();
-      touched = 0;
+      touched = 0; 
     }
+    
     // Verifica se atravessou as lanes
     if(player->getX() <= (laneStartX-(l->getNumberOfLanes()))) {
       level++;
@@ -112,8 +118,10 @@ int main ()
     if ( (t1-T) > 1000000 ) break;
 
     std::this_thread::sleep_for (std::chrono::milliseconds(100));
+
   }
   tela->stop();
   teclado->stop();
+  
   return 0;
 }

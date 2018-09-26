@@ -5,6 +5,8 @@
 #include <thread>
 #include <string>
 #include <random>
+#include <time.h>
+
 
 using namespace std;
 
@@ -87,6 +89,8 @@ class Tela {
     void init();
     void update();
     void clearLaneArea();
+    void gameOver();
+
 };
 
 void threadfun (char *keybuffer, int *control);
@@ -105,5 +109,9 @@ class Teclado {
     void init();
     char getchar();
 };
+
+void delay(float number_of_seconds);
+void showStartFrog();
+void showSadFrog();
 
 #endif
