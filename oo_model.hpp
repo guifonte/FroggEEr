@@ -4,88 +4,63 @@
 
 #include <thread>
 #include <string>
+#include <time.h>
 
 using namespace std;
 
 class Player {
   private:
+  float startX;
+  float startY;
   float x;
   float y;
 
   public:
   Player(float x, float y);
   void update(float newX,float newY);
+  void resetPos();
   float getX();
   float getY();
 };
 
-/*class Obstaculo {
-  private:
-  float x;
-  float comprimento;
-
-  public:
-  Obstaculo(float x, float comprimento);
-  void update(float x);
-};
-*/
 class Lane {
   private:
   int x;
+  int nivel;
   float pos;
   float velocidade;
   public:
   string content;
   Lane(int y, int nivel);
   void update(float newPos);
+  void resetPos();
   float getPos();
+  int getNivel();
   int getX();
   float getSpeed();
+  string getContent();
 };
 
-
-
-/*class Corpo {
-  private:
-  float massa;
-  float velocidade;
-  float posicao;
-  float posicao_central;
-  float elasticidade;
-  float amortecimento;
-  float forca;
-
-  public:
-  Corpo(float massa, float velocidade, float posicao, float elasticidade, float amortecimento);
-  void update(float nova_velocidade, float nova_posicao, float nova_forca);
-  float get_massa();
-  float get_velocidade();
-  float get_posicao();
-  float get_posicao_central();
-  float get_elasticidade();
-  float get_amortecimento();
-  float get_forca();
-};
-
-class ListaDeCorpos {
+class ListaDeLanes {
  private:
-    std::vector<Corpo*> *corpos;
+    std::vector<Lane*> *lanes;
 
   public:
-    ListaDeCorpos();
-    void hard_copy(ListaDeCorpos *ldc);
-    void add_corpo(Corpo *c);
-    std::vector<Corpo*> *get_corpos();
-};*/
+    ListaDeLanes();
+    void hard_copy(ListaDeLanes *ldl);
+    void addLane(Lane *l);
+    std::vector<Lane*> *getLanes();
+};
 
 class Fisica {
   private:
-    Lane *lane;
+    ListaDeLanes *lanes;
+    Player *player;
 
   public:
-    Fisica(Lane *lane);
+    Fisica(ListaDeLanes *lanes, Player *player);
     //void add_lane(Corpo *c);
-    //void choque(float forca);
+    int hasTouched();
     void update(float deltaT);
 };
 
@@ -93,17 +68,18 @@ class Tela {
   private:
     //ListaDeCorpos *lista, *lista_anterior;
     Player *playerAtual, *playerAnterior;
-    Lane *lane;
+    ListaDeLanes *lanes;
     int maxI, maxJ;
     float maxX, maxY;
 
   public:
     //Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY);
-    Tela(Player *player, Lane *lane, int maxI, int maxJ, float maxX, float maxY);
+    Tela(Player *player, ListaDeLanes *lanes, int maxI, int maxJ, float maxX, float maxY);
     ~Tela();
     void stop();
     void init();
     void update();
+    void gameOver();
 };
 
 void threadfun (char *keybuffer, int *control);
@@ -122,5 +98,9 @@ class Teclado {
     void init();
     char getchar();
 };
+
+void delay(float number_of_seconds);
+void showStartFrog();
+void showSadFrog();
 
 #endif
