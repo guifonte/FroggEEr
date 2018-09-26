@@ -1,6 +1,4 @@
-=== Aluno =============== RA ==
-Cynthia Baran           135371
-Guilherme Fontebasso    135973
+Made by Cynthia Baran and Guilherme Fontebasso
 
 To play the game, run
 
