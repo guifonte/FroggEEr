@@ -14,7 +14,7 @@ void delay(float number_of_seconds)
     while (clock() < start_time + milli_seconds); 
 } 
 
-int main ()
+void showStartFrog ()
 {
     FILE *fptr;
 
@@ -34,6 +34,4 @@ int main ()
     printf("\n");
     fclose(fptr);
     getchar();
-
-    return 0;
 }

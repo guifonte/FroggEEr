@@ -13,6 +13,7 @@ uint64_t get_now_ms() {
 int main ()
 {
   srand(time(NULL));
+  showStartFrog();
   Player *player = new Player(13, 25);
   Lane *l1 = new Lane(7,4);
   Lane *l2 = new Lane(8,2);
@@ -56,6 +57,7 @@ int main ()
     // Atualiza modelo
     f->update(deltaT);
     touched = f->hasTouched();
+
     // Atualiza tela
     tela->update();
 
@@ -76,19 +78,21 @@ int main ()
     if (c=='q') {
       break;
     }
-    
+   
     if(touched == 1){
       player->resetPos();
-      touched = 0;
+      touched = 0; 
     }
-   
+
     // Condicao de parada
     if ( (t1-T) > 1000000 ) break;
 
     std::this_thread::sleep_for (std::chrono::milliseconds(100));
     i++;
+    
   }
   tela->stop();
   teclado->stop();
+  
   return 0;
 }

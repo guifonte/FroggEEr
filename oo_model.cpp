@@ -10,6 +10,7 @@
 #include <ncurses.h>
 using namespace std::chrono;
 
+
 Player::Player(float x, float y) {
   this->startX = x;
   this->startY = y;
@@ -313,6 +314,37 @@ void Tela::update() {
   refresh();
 }
 
+void Tela::gameOver() {
+  FILE *fptr;
+
+  if ((fptr = fopen("./res/sad_frog.txt","r")) == NULL){
+    printf("Error! opening file");
+    exit(1);
+  }
+
+  char c = fgetc(fptr); 
+  move(0,0);
+  int i=0;
+  int j=0;
+
+  while (c != EOF) { 
+    if (c=='\0') {
+      j++;
+      i=0;
+    }
+    else {
+      move(i,j);
+      echochar(c); 
+      refresh();
+      i++;
+    }
+    //delay(0.3); 
+    c = fgetc(fptr); 
+  } 
+  printf("\n");
+  fclose(fptr);
+}
+
 void Tela::stop() {
   endwin();
 }
@@ -348,6 +380,68 @@ void threadfun (char *keybuffer, int *control)
     std::this_thread::sleep_for (std::chrono::milliseconds(10));
   }
   return;
+}
+
+void delay(float number_of_seconds) 
+{ 
+    // Converting time into milli_seconds 
+    float milli_seconds = 1000 * number_of_seconds; 
+  
+    // Stroing start time 
+    clock_t start_time = clock(); 
+  
+    // looping till required time is not acheived 
+    while (clock() < start_time + milli_seconds); 
+} 
+
+void showStartFrog ()
+{
+    FILE *fptr;
+
+    if ((fptr = fopen("./res/froggEEr.txt","r")) == NULL){
+        printf("Error! opening file");
+        exit(1);
+    }
+
+    char c = fgetc(fptr); 
+
+    while (c != EOF) { 
+        printf ("%c", c); 
+        delay(0.3); 
+        c = fgetc(fptr); 
+    } 
+    
+    printf("\n");
+    fclose(fptr);
+    getchar();
+}
+
+void showSadFrog ()
+{
+    FILE *fptr;
+
+    if ((fptr = fopen("./res/sad_frog.txt","r")) == NULL){
+        printf("Error! opening file");
+        exit(1);
+    }
+
+    //char c = fgetc(fptr); 
+
+    char line[256];
+    while (fgets(line, sizeof(line), fptr)) {
+        /* note that fgets don't strip the terminating \n, checking its
+           presence would allow to handle lines longer that sizeof(line) */
+        printf("%s\n", line); 
+    }
+
+    // while (c != EOF) { 
+    //     printf ("%c", c); 
+    //     delay(0.3); 
+    //     c = fgetc(fptr); 
+    // } 
+    
+    printf("\n");
+    fclose(fptr);
 }
 
 Teclado::Teclado() {

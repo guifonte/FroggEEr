@@ -4,6 +4,7 @@
 
 #include <thread>
 #include <string>
+#include <time.h>
 
 using namespace std;
 
@@ -22,16 +23,6 @@ class Player {
   float getY();
 };
 
-/*class Obstaculo {
-  private:
-  float x;
-  float comprimento;
-
-  public:
-  Obstaculo(float x, float comprimento);
-  void update(float x);
-};
-*/
 class Lane {
   private:
   int x;
@@ -50,30 +41,6 @@ class Lane {
   string getContent();
 };
 
-
-
-/*class Corpo {
-  private:
-  float massa;
-  float velocidade;
-  float posicao;
-  float posicao_central;
-  float elasticidade;
-  float amortecimento;
-  float forca;
-
-  public:
-  Corpo(float massa, float velocidade, float posicao, float elasticidade, float amortecimento);
-  void update(float nova_velocidade, float nova_posicao, float nova_forca);
-  float get_massa();
-  float get_velocidade();
-  float get_posicao();
-  float get_posicao_central();
-  float get_elasticidade();
-  float get_amortecimento();
-  float get_forca();
-};
-*/
 class ListaDeLanes {
  private:
     std::vector<Lane*> *lanes;
@@ -112,6 +79,7 @@ class Tela {
     void stop();
     void init();
     void update();
+    void gameOver();
 };
 
 void threadfun (char *keybuffer, int *control);
@@ -130,5 +98,9 @@ class Teclado {
     void init();
     char getchar();
 };
+
+void delay(float number_of_seconds);
+void showStartFrog();
+void showSadFrog();
 
 #endif
