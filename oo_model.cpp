@@ -4,6 +4,7 @@
 #include <iostream>
 #include <time.h> 
 #include <string>
+#include <random>
 
 #include "oo_model.hpp"
 
@@ -59,7 +60,7 @@ string Lane::getContent() {
   return this->content;
 }
 
-Lane::Lane(int x, int nivel) {
+Lane::Lane(int x, int nivel, int length) {
   this->x=x;
   this->pos=0;
   this->nivel=nivel;
@@ -110,10 +111,14 @@ Lane::Lane(int x, int nivel) {
 }
 
 ListaDeLanes::ListaDeLanes() {
+  std::random_device rd;
+  std::mt19937 generator(rd());
   this->lanes = new std::vector<Lane *>(0);
+  this->numberOflanes = 0;
+  this->gen = generator;
 }
 
-void ListaDeLanes::hard_copy(ListaDeLanes *ldl) {
+/*void ListaDeLanes::hard_copy(ListaDeLanes *ldl) {
   std::vector<Lane *> *lanes = ldl->getLanes();
 
   for (int k=0; k<lanes->size(); k++) {
@@ -121,10 +126,44 @@ void ListaDeLanes::hard_copy(ListaDeLanes *ldl) {
                           (*lanes)[k]->getNivel() );
     this->addLane(l);
   }
+}*/
+
+std::mt19937 *ListaDeLanes::getGenerator() {
+  return &(this->gen);
 }
 
 void ListaDeLanes::addLane(Lane *l) {
   (this->lanes)->push_back(l);
+}
+
+void ListaDeLanes::clearLanes() {
+  (this->lanes)->clear();
+}
+void ListaDeLanes::createLanes(int maxNumLanes, int length, int startPos, int level) {
+
+  std::normal_distribution<double> d(maxNumLanes/2,2.0);
+  int numOfLanes = int(d(*(this->getGenerator())));
+  int lastLevel;
+
+  if(numOfLanes > level)
+    numOfLanes = level;
+  if(numOfLanes < level/2)
+    numOfLanes = level/2;
+  if(numOfLanes < 3)
+    numOfLanes = 3;
+  if(numOfLanes > maxNumLanes)
+    numOfLanes = maxNumLanes; 
+
+  this->numberOflanes = numOfLanes;
+
+  for(int i = 0; i < numOfLanes; i++){
+    Lane *tempLane = new Lane(startPos-i,level,length);
+    (this->lanes)->push_back(tempLane);
+  }
+}
+
+int ListaDeLanes::getNumberOfLanes() {
+  return this->numberOflanes;
 }
 
 std::vector<Lane*> *ListaDeLanes::getLanes() {
@@ -167,24 +206,12 @@ int Fisica::hasTouched(){
           return 0;
         }
       }
-
-
     }
   }
   return 0;
 }
 
-/*Tela::Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY) {
-  this->lista = ldc;
-  this->lista_anterior = new ListaDeCorpos();
-  this->lista_anterior->hard_copy(this->lista);
-  this->maxI = maxI;
-  this->maxJ = maxJ;
-  this->maxX = maxX;
-  this->maxY = maxY;
-}*/
-
-Tela::Tela(Player *player, ListaDeLanes *lanes, int maxI, int maxJ, float maxX, float maxY) {
+Tela::Tela(Player *player, ListaDeLanes *lanes, int *level, int maxI, int maxJ, float maxX, float maxY) {
   this->playerAtual = player;
   this->lanes = lanes;
   this->playerAnterior = new Player(0, 0);
@@ -193,12 +220,38 @@ Tela::Tela(Player *player, ListaDeLanes *lanes, int maxI, int maxJ, float maxX, 
   this->maxJ = maxJ;
   this->maxX = maxX;
   this->maxY = maxY;
+  this->level = level;
 }
 
 void Tela::init() {
   initscr();			       /* Start curses mode 		*/
 	raw();				         /* Line buffering disabled	*/
   curs_set(0);           /* Do not display cursor */
+
+  //Desenha bordas da tela
+  for(int i = 0; i < this->maxI+1; i++) {
+    move(i,0);
+    echochar('|');
+    move(i,this->maxJ+1);
+    echochar('|');
+  }
+  for(int i = 1; i < this->maxJ+1; i++) {
+    move(0,i);
+    echochar('-');
+    move(2,i);
+    echochar('-');
+    move(this->maxI,i);
+    echochar('-');
+  }
+}
+
+void Tela::clearLaneArea() {
+  for(int i = 5; i < this->maxI-2; i++) {
+    for(int j = 1; j < this->maxJ; j++) {
+      move(i,j);
+      echochar(' ');
+    }
+  }
 }
 
 void Tela::update() {
@@ -210,19 +263,32 @@ void Tela::update() {
   int lanePosOverflow;
   int n_cols;
   int n_lines;
+  int numLanes;
+  int numLines;
+  int laneLength;
 
   getmaxyx(stdscr,n_lines,n_cols); /*size of the terminal*/
 
+  std::vector<Lane *> *l = this->lanes->getLanes();
+  numLanes = (*l).size();
+  numLines = numLanes + 4 + 2 + 3;
+  laneLength = (*l)[0]->content.size()+2;
+  
+  // escreve título e nível
+  move(1,2);
+  printw("FroggEEr  |  ");
+  move(1,14);
+  printw("          ");
+  move(1,14);
+  printw("Level: %d",*level);
 
   // Apaga lanes da tela
-  std::vector<Lane *> *l = this->lanes->getLanes();
   for(int i = 0; i < (*l).size(); i++) {
       for(int j = 0; j<(*l)[i]->content.size(); j++) {
-        move((*l)[i]->getX(),j);
+        move((*l)[i]->getX(),j+1);
         echochar(' ');
       }
   }
-
 
   // Desenha lanes na tela
   for(int i = 0; i < (*l).size(); i++) {
@@ -242,7 +308,7 @@ void Tela::update() {
         laneDrawPos++;
       }
       
-      move((*l)[i]->getX(),laneDrawPos);
+      move((*l)[i]->getX(),laneDrawPos +1);
       echochar((*l)[i]->content[j]);
     }
   }
@@ -254,12 +320,6 @@ void Tela::update() {
 
   playerJ = (int) (this->playerAnterior->getY()) * \
         (this->maxJ / this->maxY);
-
-  /*for(int i=10;i>=0;i--){
-    move(0, i);
-    echochar(' ');
-  }
-  printf("%d %d\n",playerI,playerJ);*/
 
   if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
     move(playerI, playerJ);   /* Move cursor to position */
@@ -274,40 +334,13 @@ void Tela::update() {
   playerJ = (int) (this->playerAtual->getY()) * \
         (this->maxJ / this->maxY);
 
-  /*for(int i=10;i>=0;i--){
-    move(1, i);
-    echochar(' ');
-  }
-  printf("%d %d\n",playerI,playerJ);*/
-
   if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
     move(playerI, playerJ);   /* Move cursor to position */
     echochar('*');  /* Prints character, advances a position */
   }
 
   // Atualiza player
-  
   this->playerAnterior->update(this->playerAtual->getX(), this->playerAtual->getY());
-  /*printf("%f %f ", this->playerAnterior->getX(), this->playerAnterior->getY());*/
-  // Desenha corpos na tela
-  //std::vector<Corpo *> *corpos = this->lista->get_corpos();
-
-  //for (int k=0; k<corpos->size(); k++)
-  //{
-  //  i = (int) ((*corpos)[k]->get_posicao()) * \
-  //      (this->maxI / this->maxX);
-  //
-  //  if((i < n_lines) && (k < n_cols) && (i > 0)){ /*Check if inside the terminal window*/
-  //    move(i, k);   /* Move cursor to position */
-  //    echochar('*');  /* Prints character, advances a position */
-  //  }
-
-
-    // Atualiza corpos antigos
-  //  (*corpos_old)[k]->update(  (*corpos)[k]->get_velocidade(),\
-  //                             (*corpos)[k]->get_posicao(),\
-  //                             (*corpos)[k]->get_forca());
-  //}
 
   // Atualiza tela
   refresh();
@@ -320,23 +353,6 @@ void Tela::stop() {
 Tela::~Tela() {
   this->stop();;
 }
-
-
-/*
-class Teclado {
-  private:
-    char ultima_captura;
-    int rodando;
-
-  public:
-    Teclado();
-    ~Teclado();
-    void stop();
-    void init();
-    char getchar();
-}
-
-*/
 
 void threadfun (char *keybuffer, int *control)
 {

@@ -13,25 +13,31 @@ uint64_t get_now_ms() {
 int main ()
 {
   srand(time(NULL));
-  Player *player = new Player(13, 25);
-  Lane *l1 = new Lane(7,4);
-  Lane *l2 = new Lane(8,2);
-  Lane *l3 = new Lane(9,3);
-  Lane *l4 = new Lane(10,2);
-  Lane *l5 = new Lane(11,1);
-  Lane *l6 = new Lane(12,1);
+  int winX = 15;
+  int winY = 51;
 
+  //1 because of the botton besel and 2 because of the start safe zone
+  int laneStartX = winX-3; 
+  int laneY = winY-2; //2 because of the left and right besel
+  //3 for the upper header, 1 for the botton besel and 4 for the safe zones
+  //but there are winX+1 lines, because of that, -7
+  int maxNumLanes = winX-7; 
+
+  int level = 1;
+  int nextLevel = 1 ; //boolean
+
+  int touched = 0;
+  float forca = 100;
+
+  char c;
+  char cPrev = 0;
+
+  Player *player = new Player(laneStartX+2, laneY/2);
   ListaDeLanes *l = new ListaDeLanes();
-  l->addLane(l1);
-  l->addLane(l2);
-  l->addLane(l3);
-  l->addLane(l4);
-  l->addLane(l5);
-  l->addLane(l6);
 
   Fisica *f = new Fisica(l,player);
 
-  Tela *tela = new Tela(player, l, 50, 50, 50, 50);
+  Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
   tela->init();
 
   Teclado *teclado = new Teclado();
@@ -42,51 +48,70 @@ int main ()
   uint64_t deltaT;
   uint64_t T;
 
-  int i = 0;
-  int touched = 0;
-  float forca = 100;
-
   T = get_now_ms();
   t1 = T;
+
   while (1) {
     // Atualiza timers
     t0 = t1;
     t1 = get_now_ms();
     deltaT = t1-t0;
+
+    if(nextLevel == 1) {
+      nextLevel = 0;
+      l->clearLanes();
+      tela->clearLaneArea();
+      l->createLanes(maxNumLanes,laneY,laneStartX, level);
+      player->resetPos();
+    }
+
     // Atualiza modelo
     f->update(deltaT);
     touched = f->hasTouched();
+
     // Atualiza tela
     tela->update();
 
     // Lê o teclado
-    char c = teclado->getchar();
-    if (c=='w') {
-      player->update(player->getX()-1,player->getY());
+    c = teclado->getchar();
+    if (c != cPrev){
+      if (c=='w') {
+        if(player->getX() > 3)
+          player->update(player->getX()-1,player->getY());
+      }
+      if (c=='a') {
+        if(player->getY() > 1)
+          player->update(player->getX(),player->getY()-1);
+      }
+      if (c=='s') {
+        if(player->getX() < laneStartX+2)
+          player->update(player->getX()+1,player->getY());
+      }
+      if (c=='d') {
+        if(player->getY() < laneY+2)
+          player->update(player->getX(),player->getY()+1);
+      }
+      if (c=='q') {
+        break;
+      }
     }
-    if (c=='a') {
-      player->update(player->getX(),player->getY()-1);
-    }
-    if (c=='s') {
-      player->update(player->getX()+1,player->getY());
-    }
-    if (c=='d') {
-      player->update(player->getX(),player->getY()+1);
-    }
-    if (c=='q') {
-      break;
-    }
-    
+    cPrev = c;
+
+    // Verifica se tocou em algum bloco
     if(touched == 1){
       player->resetPos();
       touched = 0;
     }
-   
+    // Verifica se atravessou as lanes
+    if(player->getX() <= (laneStartX-(l->getNumberOfLanes()))) {
+      level++;
+      nextLevel++;
+    }
+
     // Condicao de parada
     if ( (t1-T) > 1000000 ) break;
 
     std::this_thread::sleep_for (std::chrono::milliseconds(100));
-    i++;
   }
   tela->stop();
   teclado->stop();

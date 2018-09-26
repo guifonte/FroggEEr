@@ -4,6 +4,7 @@
 
 #include <thread>
 #include <string>
+#include <random>
 
 using namespace std;
 
@@ -22,16 +23,6 @@ class Player {
   float getY();
 };
 
-/*class Obstaculo {
-  private:
-  float x;
-  float comprimento;
-
-  public:
-  Obstaculo(float x, float comprimento);
-  void update(float x);
-};
-*/
 class Lane {
   private:
   int x;
@@ -40,7 +31,7 @@ class Lane {
   float velocidade;
   public:
   string content;
-  Lane(int y, int nivel);
+  Lane(int y, int nivel, int length);
   void update(float newPos);
   void resetPos();
   float getPos();
@@ -50,38 +41,20 @@ class Lane {
   string getContent();
 };
 
-
-
-/*class Corpo {
-  private:
-  float massa;
-  float velocidade;
-  float posicao;
-  float posicao_central;
-  float elasticidade;
-  float amortecimento;
-  float forca;
-
-  public:
-  Corpo(float massa, float velocidade, float posicao, float elasticidade, float amortecimento);
-  void update(float nova_velocidade, float nova_posicao, float nova_forca);
-  float get_massa();
-  float get_velocidade();
-  float get_posicao();
-  float get_posicao_central();
-  float get_elasticidade();
-  float get_amortecimento();
-  float get_forca();
-};
-*/
 class ListaDeLanes {
  private:
     std::vector<Lane*> *lanes;
+    int numberOflanes;
+    std::mt19937 gen;
 
   public:
     ListaDeLanes();
     void hard_copy(ListaDeLanes *ldl);
     void addLane(Lane *l);
+    void clearLanes();
+    void createLanes(int maxNumLanes, int length, int startPos, int level);
+    std::mt19937 *getGenerator();
+    int getNumberOfLanes();
     std::vector<Lane*> *getLanes();
 };
 
@@ -102,16 +75,18 @@ class Tela {
     //ListaDeCorpos *lista, *lista_anterior;
     Player *playerAtual, *playerAnterior;
     ListaDeLanes *lanes;
+    int *level;
     int maxI, maxJ;
     float maxX, maxY;
 
   public:
     //Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY);
-    Tela(Player *player, ListaDeLanes *lanes, int maxI, int maxJ, float maxX, float maxY);
+    Tela(Player *player, ListaDeLanes *lanes, int *level, int maxI, int maxJ, float maxX, float maxY);
     ~Tela();
     void stop();
     void init();
     void update();
+    void clearLaneArea();
 };
 
 void threadfun (char *keybuffer, int *control);
