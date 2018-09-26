@@ -3,11 +3,62 @@
 #include <thread>
 #include <vector>
 
+#include "01-playback.hpp"
 #include "oo_model.hpp"
 
 using namespace std::chrono;
 uint64_t get_now_ms() {
   return duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count();
+}
+
+void playKillSound() {
+  uint64_t t0, t1;
+  Audio::Sample *asample;
+  asample = new Audio::Sample();
+  asample->load("res/blip.dat");
+  Audio::SoundPlayer *soundPlayer;
+  soundPlayer = new Audio::SoundPlayer();
+  soundPlayer->init();
+  soundPlayer->play(asample);
+  t0 = get_now_ms();
+  asample->set_position(0);
+  while (1) {
+    std::this_thread::sleep_for (std::chrono::milliseconds(1));
+    t1 = get_now_ms();
+
+    if (t1-t0 > 500) break;
+  }
+  soundPlayer->stop();
+}
+
+void playLevelUpSound() {
+  uint64_t t0, t1;
+  Audio::Sample *asample;
+  asample = new Audio::Sample();
+  asample->load("res/blip.dat");
+  Audio::SoundPlayer *soundPlayer;
+  soundPlayer = new Audio::SoundPlayer();
+  soundPlayer->init();
+  soundPlayer->play(asample);
+  t0 = get_now_ms();
+  asample->set_position(0);
+  while (1) {
+    std::this_thread::sleep_for (std::chrono::milliseconds(1));
+    t1 = get_now_ms();
+
+    if (t1-t0 > 1000) break;
+  }
+  asample->set_position(0);
+
+  t0 = get_now_ms();
+  while (1) {
+    std::this_thread::sleep_for (std::chrono::milliseconds(1));
+    t1 = get_now_ms();
+
+    if (t1-t0 > 500) break;
+  }
+
+  soundPlayer->stop();
 }
 
 int main ()
@@ -104,6 +155,7 @@ int main ()
     // Verifica se tocou em algum bloco
 
     if(touched == 1){
+      playKillSound();
       player->resetPos();
       touched = 0; 
     }
@@ -112,6 +164,7 @@ int main ()
     if(player->getX() <= (laneStartX-(l->getNumberOfLanes()))) {
       level++;
       nextLevel++;
+      playLevelUpSound();
     }
 
     // Condicao de parada
