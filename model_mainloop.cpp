@@ -2,6 +2,7 @@
 #include <chrono>
 #include <thread>
 #include <vector>
+#include <portaudio.h>
 
 #include "01-playback.hpp"
 #include "oo_model.hpp"
