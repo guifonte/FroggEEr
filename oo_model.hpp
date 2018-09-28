@@ -67,14 +67,12 @@ class Fisica {
 
   public:
     Fisica(ListaDeLanes *lanes, Player *player);
-    //void add_lane(Corpo *c);
     int hasTouched();
     void update(float deltaT);
 };
 
 class Tela {
   private:
-    //ListaDeCorpos *lista, *lista_anterior;
     Player *playerAtual, *playerAnterior;
     ListaDeLanes *lanes;
     int *level;
@@ -82,7 +80,6 @@ class Tela {
     float maxX, maxY;
 
   public:
-    //Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY);
     Tela(Player *player, ListaDeLanes *lanes, int *level, int maxI, int maxJ, float maxX, float maxY);
     ~Tela();
     void stop();

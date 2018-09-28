@@ -100,48 +100,6 @@ Lane::Lane(int x, int nivel, int length, std::mt19937 *gen) {
     }
     filled += tempLength;
   }
-  /*switch(random) {
-    case 0:
-      this->content = "     <<<<<<<<          <<<<<<<<<       <<<<<<<<<<<";	
-      this->velocidade = nivel * 5;
-      break;
-    case 1:
-      this->content = "     <<<<              <<<             <<<<<<<    ";
-      this->velocidade = nivel * 5;
-      break;
-    case 2:
-      this->content = "     <<<<<<<<                          <<<<<<<<<<<";
-      this->velocidade = nivel * 5;
-      break;	
-    case 3:
-      this->content = "     <<<<<<<<                          <<<<<<<<<<<";
-      this->velocidade = nivel * 1;
-      break;	
-    case 4:
-      this->content = "                   <<<<<<<<<           <<<<<<<<<<<";
-      this->velocidade = nivel * 1;
-      break;	
-    case 5:
-      this->content = "     <<<<<<<<          <<<<<<<<<                  ";
-      this->velocidade = nivel * 3;
-      break;	
-    case 6:
-      this->content = "                                       <<<<<<<<<<<";
-      this->velocidade = nivel * 3;
-      break;
-    case 7:
-      this->content = "     <<<<<<<<         <<<<<<<<<<<<<<<<<<<<        ";
-      this->velocidade = nivel * 2;
-      break;	
-    case 8:
-      this->content = "          <<<<<<<<<<<          <<     <<<<<<<     ";
-      this->velocidade = nivel * 2;
-      break;	
-    case 9:
-      this->content = "     <<<<<<<<          <<<             <<<<<<<<<<<";
-      this->velocidade = nivel * 2;
-      break;
-  }*/
 }
 
 ListaDeLanes::ListaDeLanes() {
@@ -151,16 +109,6 @@ ListaDeLanes::ListaDeLanes() {
   this->numberOflanes = 0;
   this->gen = generator;
 }
-
-/*void ListaDeLanes::hard_copy(ListaDeLanes *ldl) {
-  std::vector<Lane *> *lanes = ldl->getLanes();
-
-  for (int k=0; k<lanes->size(); k++) {
-    Lane *l = new Lane( (*lanes)[k]->getX(),
-                          (*lanes)[k]->getNivel() );
-    this->addLane(l);
-  }
-}*/
 
 std::mt19937 *ListaDeLanes::getGenerator() {
   return &(this->gen);
@@ -243,9 +191,7 @@ void Fisica::update(float deltaT) {
       newPos=newPos-50;
     }
     (*l)[i]->update(newPos);
-    //printf("%d %f / ",(*l)[i]->getX() ,(*l)[i]->getPos());
   }
-  //printf("\n");
 }
 
 int Fisica::hasTouched(){
