@@ -236,17 +236,17 @@ void Tela::init() {
   //Desenha bordas da tela
   for(int i = 0; i < this->maxI+1; i++) {
     move(i,0);
-    echochar('|');
+    addch('|');
     move(i,this->maxJ+1);
-    echochar('|');
+    addch('|');
   }
   for(int i = 1; i < this->maxJ+1; i++) {
     move(0,i);
-    echochar('-');
+    addch('-');
     move(2,i);
-    echochar('-');
+    addch('-');
     move(this->maxI,i);
-    echochar('-');
+    addch('-');
   }
 }
 
@@ -254,7 +254,7 @@ void Tela::clearLaneArea() {
   for(int i = 5; i < this->maxI-2; i++) {
     for(int j = 1; j < this->maxJ; j++) {
       move(i,j);
-      echochar(' ');
+      addch(' ');
     }
   }
 }
@@ -314,7 +314,7 @@ void Tela::update() {
       }
       
       move((*l)[i]->getX(),laneDrawPos +1);
-      echochar((*l)[i]->content[j]);
+      addch((*l)[i]->content[j]);
     }
   }
 
@@ -328,7 +328,7 @@ void Tela::update() {
 
   if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
     move(playerI, playerJ);   /* Move cursor to position */
-    echochar(' ');  /* Prints character, advances a position */
+    addch(' ');  /* Prints character, advances a position */
   }
 
   // Desenha player na tela
@@ -341,7 +341,7 @@ void Tela::update() {
 
   if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
     move(playerI, playerJ);   /* Move cursor to position */
-    echochar('*');  /* Prints character, advances a position */
+    addch('*');  /* Prints character, advances a position */
   }
 
   // Atualiza player

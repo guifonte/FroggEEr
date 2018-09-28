@@ -70,7 +70,7 @@ int main ()
   int winY = 51;
 
   showStartFrog();
-
+  freopen("/dev/null", "w", stderr);
 
   //1 because of the botton besel and 2 because of the start safe zone
   int laneStartX = winX-3; 
