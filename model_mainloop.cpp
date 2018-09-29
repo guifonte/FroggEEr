@@ -19,9 +19,10 @@ void playKillSound() {
   Audio::SoundPlayer *soundPlayer;
   soundPlayer = new Audio::SoundPlayer();
   soundPlayer->init();
+  asample->set_position(0);
   soundPlayer->play(asample);
   t0 = get_now_ms();
-  asample->set_position(0);
+  
   while (1) {
     std::this_thread::sleep_for (std::chrono::milliseconds(1));
     t1 = get_now_ms();
@@ -35,29 +36,22 @@ void playLevelUpSound() {
   uint64_t t0, t1;
   Audio::Sample *asample;
   asample = new Audio::Sample();
-  asample->load("res/blip.dat");
+  asample->load("res/levelup.dat");
   Audio::SoundPlayer *soundPlayer;
   soundPlayer = new Audio::SoundPlayer();
+  
+  asample->set_position(0);
   soundPlayer->init();
   soundPlayer->play(asample);
   t0 = get_now_ms();
-  asample->set_position(0);
+
   while (1) {
     std::this_thread::sleep_for (std::chrono::milliseconds(1));
     t1 = get_now_ms();
 
-    if (t1-t0 > 1000) break;
+    if (t1-t0 > 1500) break;
   }
-  asample->set_position(0);
-
-  t0 = get_now_ms();
-  while (1) {
-    std::this_thread::sleep_for (std::chrono::milliseconds(1));
-    t1 = get_now_ms();
-
-    if (t1-t0 > 500) break;
-  }
-
+  soundPlayer->pause();
   soundPlayer->stop();
 }
 
