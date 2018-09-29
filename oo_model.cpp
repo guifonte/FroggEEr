@@ -1,3 +1,14 @@
+/*
+ * Arquivo: 	oo_model.cpp
+ * Autores:	  Guilherme Nishino Fontebasso
+ *		        Cynthia Baran
+ * Descrição:	Implementação MVC de uma implementação do
+ *		        jogo Frogger utilizando ALSA para os sons
+ *		        e ncurses para a visualização
+ * Comandos:	WASD para mover o asterisco (player)
+ * 		        Q para sair
+*/
+
 #include <vector>
 #include <chrono>
 #include <thread>
@@ -61,39 +72,46 @@ string Lane::getContent() {
   return this->content;
 }
 
+/*
+	Lane é o objeto de uma rua do frogger o qual o player
+	precisa passar sem encostar em nenhum dos objetos.
+*/
 Lane::Lane(int x, int nivel, int length, std::mt19937 *gen) {
-  int makeGap = rand()%(2);
+  int makeGap = rand()%(2); // escolhe se a lane começa com uma lacuna ou com um obstáculo
   int tempLength;
   int filled = 0;
   this->x=x;
   this->pos=0;
   this->nivel=nivel;
 
-  std::normal_distribution<double> d_speed(nivel*2/3,nivel/6);
+  //escolhe a velocidade a partir de um valor randomico com probabilidade dada por uma distribuição normal
+  std::normal_distribution<double> d_speed(nivel*2/3,nivel/6); 
   this->velocidade = 2*d_speed(*gen);
 
+  //limita a velocidade mínima
   if(this->velocidade <= 3)
     this->velocidade = 3;
 
+  //o tamanho dos obstaculos e das lacunas também são escolhidos a partir de distribuições normais
   std::normal_distribution<double> d_blocks(length/20*nivel*0.5,2);
   std::normal_distribution<double> d_gaps(length/2-nivel/2+4,2);
 
   while(filled < length) {
-    if(makeGap == 1){ //make gap
+    if(makeGap == 1){ //faz lacuna
       makeGap = 0;
       tempLength = int(d_gaps(*gen));
-      if(tempLength <= 3)
+      if(tempLength <= 3) //limita tamanho mínimo
         tempLength = 3;
-      if(filled+tempLength > length)
+      if(filled+tempLength > length) //verifica se extrapola o tamanho da lane
         tempLength = length - filled;
       for(int i = 0; i < tempLength; i++)
         this->content += " ";
-    } else { //make block
+    } else { //faz obstáculo
       makeGap = 1;
       tempLength = int(d_blocks(*gen));
-      if(tempLength <= 4)
+      if(tempLength <= 4) //limita tamanho mínimo
         tempLength = 4;
-      if(filled+tempLength > length)
+      if(filled+tempLength > length) //verifica se extrapola o tamanho da lane
         tempLength = length - filled;
       for(int i = 0; i < tempLength; i++)
         this->content += "<";
@@ -127,7 +145,7 @@ void ListaDeLanes::createLanes(int maxNumLanes, int length, int startPos, int le
   int numOfLanes = int(d(*(this->getGenerator())));
   int laneLevel;
   int maxLaneLevel;
-  //balance the number of lanes
+  //limita a quantidade máxima e mínima das lanes
   if(numOfLanes > level)
     numOfLanes = level;
   if(numOfLanes < level/3)
@@ -139,7 +157,7 @@ void ListaDeLanes::createLanes(int maxNumLanes, int length, int startPos, int le
 
   this->numberOflanes = numOfLanes;
 
-  //balance the max level of lanes
+  //balanceia o nível máximo das lanes
   if(numOfLanes <= level/2) {
     maxLaneLevel = 2*level;
   }
@@ -194,6 +212,11 @@ void Fisica::update(float deltaT) {
   }
 }
 
+/*
+  verifica se o player tocou algum dos obstáculos
+  como cada lane é um vetor, é apenas necessário verificar
+  se a posição que o player está é a mesma que um < no vetor.
+*/
 int Fisica::hasTouched(){
   std::vector<Lane *> *l = this->lanes->getLanes();
   for(int i = 0; i < (*l).size(); i++) {
@@ -295,7 +318,13 @@ void Tela::update() {
       }
   }
 
-  // Desenha lanes na tela
+  /* 
+    Desenha lanes na tela.
+    Para dar o efeito de movimento, sem modificar o vetor,
+    se move em qual parte do vetor se começará à desenhar
+    na parte inicial da tela, a partir do getPos().
+    Ele é quem é atualizado a partir da velocidade em física::update
+  */
   for(int i = 0; i < (*l).size(); i++) {
     laneStartPos = (*l)[i]->getPos();
     laneDrawPos = laneStartPos;

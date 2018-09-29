@@ -1,3 +1,14 @@
+/*
+ * Arquivo: 	oo_model.hpp
+ * Autores:	  Guilherme Nishino Fontebasso
+ *		        Cynthia Baran
+ * Descrição:	Implementação MVC de uma implementação do
+ *		        jogo Frogger utilizando ALSA para os sons
+ *		        e ncurses para a visualização
+ * Comandos:	WASD para mover o asterisco (player)
+ * 		        Q para sair
+*/
+
 
 #ifndef OO_MODEL_HPP
 #define OO_MODEL_HPP

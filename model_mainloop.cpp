@@ -1,3 +1,13 @@
+/*
+ * Arquivo: 	model_mainloop.cpp
+ * Autores:	  Guilherme Nishino Fontebasso
+ *		        Cynthia Baran
+ * Descrição:	Implementação MVC de uma implementação do
+ *		        jogo Frogger utilizando ALSA para os sons
+ *		        e ncurses para a visualização
+ * Comandos:	WASD para mover o asterisco (player)
+ * 		        Q para sair
+*/
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -59,7 +69,7 @@ int main ()
   int winY = 51;
 
   showStartFrog();
-
+  freopen("/dev/null", "w", stderr);
 
   //1 because of the botton besel and 2 because of the start safe zone
   int laneStartX = winX-3; 
@@ -69,13 +79,12 @@ int main ()
   int maxNumLanes = winX-7; 
 
   int level = 1;
-  int nextLevel = 1 ; //boolean
+  int nextLevel = 1 ; //boolean que indica se é necessário mudar de nível e gerar novas lanes
 
-  int touched = 0;
-  float forca = 100;
+  int touched = 0;//indica se player tocou em algo
 
-  char c;
-  char cPrev = 0;
+  char c;//char clicado no teclado
+  char cPrev = 0;//char anterior clicado pelo teclado
 
   Player *player = new Player(laneStartX+2, laneY/2);
   ListaDeLanes *l = new ListaDeLanes();
@@ -102,6 +111,9 @@ int main ()
     t1 = get_now_ms();
     deltaT = t1-t0;
 
+    //verifica se muda de nível.
+    //Se sim, apaga as lanes anteriores e cria novas com o novo nível
+    //Move o player para posição inicial
     if(nextLevel == 1) {
       nextLevel = 0;
       l->clearLanes();
@@ -119,7 +131,7 @@ int main ()
 
     // Lê o teclado
     c = teclado->getchar();
-    if (c != cPrev){
+    if (c != cPrev){ //evita que o usuário deixe o botão pressionado para andar mais rápido
       if (c=='w') {
         if(player->getX() > 3)
           player->update(player->getX()-1,player->getY());
