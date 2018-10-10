@@ -543,7 +543,7 @@ void Server::init(unsigned int port){
   myself.sin_port = htons(port);
   inet_aton("0.0.0.0", &(myself.sin_addr));
 
-  if (bind(socket_fd, (struct sockaddr*)&myself, sizeof(myself)) != 0) {
+  if (::bind(socket_fd, (struct sockaddr*)&myself, sizeof(myself)) != 0) {
     //return 0;
   }
 
