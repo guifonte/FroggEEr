@@ -83,8 +83,9 @@ int main ()
 
   int touched = 0;//indica se player tocou em algo
 
-  char c;//char clicado no teclado
+  char c,c2;//char clicado no teclado
   char cPrev = 0;//char anterior clicado pelo teclado
+  char cPrev2 = 0;
 
   Player *player = new Player(laneStartX+2, laneY/2);
   ListaDeLanes *l = new ListaDeLanes();
@@ -156,30 +157,31 @@ int main ()
     }
     cPrev = c;
 
-    c = Server::key;
-    if (c != cPrev){ //evita que o usuário deixe o botão pressionado para andar mais rápido
-      if (c=='w') {
+    c2 = Server::key;
+    if (c2 != cPrev2){ //evita que o usuário deixe o botão pressionado para andar mais rápido
+      if (c2=='w') {
         if(player->getX() > 3)
           player->update(player->getX()-1,player->getY());
       }
-      if (c=='a') {
+      if (c2=='a') {
         if(player->getY() > 1)
           player->update(player->getX(),player->getY()-1);
       }
-      if (c=='s') {
+      if (c2=='s') {
         if(player->getX() < laneStartX+2)
           player->update(player->getX()+1,player->getY());
       }
-      if (c=='d') {
+      if (c2=='d') {
         if(player->getY() < laneY+2)
           player->update(player->getX(),player->getY()+1);
       }
-      if (c=='q') {
+      if (c2=='q') {
         break;
       }
+      
     }
-    cPrev = c;
-
+    cPrev2 = c2;
+    Server::key = 0;
     // Verifica se tocou em algum bloco
 
     if(touched == 1){

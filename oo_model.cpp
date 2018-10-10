@@ -559,6 +559,13 @@ void Server::init(unsigned int port){
     recv(connection_fd, input_buffer, 10, 0);
     Server::key = input_buffer[0];
     //printf("%s\n", input_buffer);
+
+    /* Respondendo */
+    if (send(connection_fd, "PONG", 5, 0) < 0) {
+      //printf("Erro ao enviar mensagem de retorno\n");
+    } else {
+     // printf("Sucesso para enviar mensagem de retorno\n");
+    }
   }
 
   close(socket_fd);
