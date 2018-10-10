@@ -29,7 +29,7 @@ int main() {
     return 0;
   }
   printf("Conectei ao servidor\n");
-
+  system ("/bin/stty raw");
   character[1] = '\0';
   /* Agora, meu socket funciona como um descritor de arquivo usual */
   while(character[0] != 'q'){
@@ -47,6 +47,7 @@ int main() {
   recv(socket_fd, reply, 10, 0);
   printf("Resposta:\n%s\n", reply);
   close(socket_fd);
+  system ("/bin/stty cooked");
   return 0;
 }
 
