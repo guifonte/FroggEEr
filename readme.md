@@ -1,12 +1,8 @@
-Made by Cynthia Baran and Guilherme Fontebasso
+=== Aluno =============== RA ==
+Cynthia Baran           135371
+Guilherme Fontebasso    135973
 
-To play the game, run
 
-```
-git clone https://github.com/guifonte/FroggEEr.git
-cd FroggEEr
-make
-./model
-```
-To move your star, use the `wasd` keys.
-To quit the game, press `q` and then `Ctrl+C`
+Nessa branch foi implementado o controle remoto. O teclado normal não foi desativado.
+Agora, o arquivo principal levanta um servidor TCP na porta 3001. 
+O cliente pede que o usuário informe o IP do servidor com o jogo que se quer controlar. Depois disso, se a conexão for bem sucedida, todo caracter inserido pelo cliente será enviado para o servidor, podendo assim controlar o personagem. 
