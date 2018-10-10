@@ -17,6 +17,13 @@
 #include <string>
 #include <random>
 
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include "oo_model.hpp"
 
 #include <ncurses.h>
@@ -520,4 +527,39 @@ char Teclado::getchar() {
   char c = this->ultima_captura;
   this->ultima_captura = 0;
   return c;
+}
+
+char Server::key='0';
+
+void Server::init(unsigned int port){
+  int socket_fd, connection_fd;
+  struct sockaddr_in myself, client;
+  socklen_t client_size = (socklen_t)sizeof(client);
+  char input_buffer[50];
+
+  socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+  myself.sin_family = AF_INET;
+  myself.sin_port = htons(port);
+  inet_aton("0.0.0.0", &(myself.sin_addr));
+
+  if (bind(socket_fd, (struct sockaddr*)&myself, sizeof(myself)) != 0) {
+    //return 0;
+  }
+
+  listen(socket_fd, 2);
+  connection_fd = accept(socket_fd, (struct sockaddr*)&client, &client_size);
+
+  /* Identificando cliente 
+  char ip_client[INET_ADDRSTRLEN];
+  inet_ntop( AF_INET, &(client.sin_addr), ip_client, INET_ADDRSTRLEN );
+  printf("IP que enviou: %s\n", ip_client);*/
+
+  while (1) {
+    recv(connection_fd, input_buffer, 10, 0);
+    Server::key = input_buffer[0];
+    //printf("%s\n", input_buffer);
+  }
+
+  close(socket_fd);
 }

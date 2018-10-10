@@ -123,3 +123,9 @@ void showStartFrog();
 void showSadFrog();
 
 #endif
+
+class Server {
+  public:
+    static char key;
+    static void init(unsigned int port);
+};

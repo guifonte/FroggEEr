@@ -97,6 +97,8 @@ int main ()
   Teclado *teclado = new Teclado();
   teclado->init();
 
+  std::thread serverthread(Server::init,3001);
+
   uint64_t t0;
   uint64_t t1;
   uint64_t deltaT;
@@ -154,6 +156,30 @@ int main ()
     }
     cPrev = c;
 
+    c = Server::key;
+    if (c != cPrev){ //evita que o usuário deixe o botão pressionado para andar mais rápido
+      if (c=='w') {
+        if(player->getX() > 3)
+          player->update(player->getX()-1,player->getY());
+      }
+      if (c=='a') {
+        if(player->getY() > 1)
+          player->update(player->getX(),player->getY()-1);
+      }
+      if (c=='s') {
+        if(player->getX() < laneStartX+2)
+          player->update(player->getX()+1,player->getY());
+      }
+      if (c=='d') {
+        if(player->getY() < laneY+2)
+          player->update(player->getX(),player->getY()+1);
+      }
+      if (c=='q') {
+        break;
+      }
+    }
+    cPrev = c;
+
     // Verifica se tocou em algum bloco
 
     if(touched == 1){
@@ -178,6 +204,5 @@ int main ()
   
   tela->stop();
   teclado->stop();
-  
   return 0;
 }
