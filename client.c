@@ -29,16 +29,14 @@ int main() {
     return 0;
   }
   printf("Conectei ao servidor\n");
-  system ("/bin/stty raw");
+  system("/bin/stty raw");
   character[1] = '\0';
   /* Agora, meu socket funciona como um descritor de arquivo usual */
   while(character[0] != 'q'){
     scanf(" %c",&character[0]);
-    getchar();
-    printf("ok");
     if(character[0] != ' '){
       send(socket_fd, character, 2, 0);
-      printf("Enviei mensagem com o caractere %c\n", character[0]);
+      //printf("Enviei mensagem com o caractere %c\n", character[0]);
     }
   }
 
