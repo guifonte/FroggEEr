@@ -1,6 +1,6 @@
-=== Aluno =============== RA ==
-Cynthia Baran           135371
-Guilherme Fontebasso    135973
+=== Aluno =============== RA ==\
+Cynthia Baran&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;135371\
+Guilherme Fontebasso&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;135973
 
 
 Nessa branch foi implementado o controle remoto. O teclado normal não foi desativado.
