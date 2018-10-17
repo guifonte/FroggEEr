@@ -46,8 +46,7 @@ int main() {
   recv(socket_fd, bufferchar, strlen(bufferchar), 0);
   rd->unserialize(bufferchar);
 
-  // TODO: fix level
-  Tela *tela = new Tela(rd->player, rd->l, &level ,winX, winY, winX, winY);
+  Tela *tela = new Tela(rd->player, rd->l, rd->level ,winX, winY, winX, winY);
   tela->init();
 
   while (1) {

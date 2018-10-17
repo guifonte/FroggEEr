@@ -99,7 +99,7 @@ int main ()
   Player *player = new Player(laneStartX+2, laneY/2);
   ListaDeLanes *l = new ListaDeLanes();
 
-  RelevantData *rd = new RelevantData(*player, *l);
+  RelevantData *rd = new RelevantData(*player, *l, level);
   string buffer;
 
   Fisica *f = new Fisica(l,player);
@@ -213,7 +213,7 @@ int main ()
       nextLevel++;
       playLevelUpSound();
     }
-    rd = new RelevantData(*player,*l);
+    rd = new RelevantData(*player,*l,level);
     rd->serialize(buffer);
     char *bufferchar = new char[buffer.length()+1];
     strcpy(bufferchar,buffer.c_str());

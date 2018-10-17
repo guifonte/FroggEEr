@@ -585,9 +585,10 @@ RelevantData::RelevantData() {
 };
 
 
-RelevantData::RelevantData(Player player, ListaDeLanes l) {
+RelevantData::RelevantData(Player player, ListaDeLanes l, int level) {
   this->data->player = player;
   this->data->l = l;
+  this->data->level=level;
 }
 
 RelevantData::RelevantData(std::string buffer_in) {
