@@ -426,18 +426,6 @@ Tela::~Tela() {
   this->stop();;
 }
 
-void threadfun (char *keybuffer, int *control)
-{
-  char c;
-  while ((*control) == 1) {
-    c = getch();
-    if (c!=ERR) (*keybuffer) = c;
-    else (*keybuffer) = 0;
-    std::this_thread::sleep_for (std::chrono::milliseconds(10));
-  }
-  return;
-}
-
 void delay(float number_of_seconds) 
 { 
     // Converting time into milli_seconds 
@@ -506,6 +494,18 @@ Teclado::Teclado() {
 Teclado::~Teclado() {
 }
 
+void threadfun (char *keybuffer, int *control)
+{
+  char c;
+  while ((*control) == 1) {
+    c = getch();
+    if (c!=ERR) (*keybuffer) = c;
+    else (*keybuffer) = 0;
+    std::this_thread::sleep_for (std::chrono::milliseconds(10));
+  }
+  return;
+}
+
 void Teclado::init() {
   // Inicializa ncurses
   raw();				         /* Line buffering disabled	*/
@@ -529,13 +529,15 @@ char Teclado::getchar() {
   return c;
 }
 
-char Server::key='0';
 
-void Server::init(unsigned int port){
-  int socket_fd, connection_fd;
-  struct sockaddr_in myself, client;
-  socklen_t client_size = (socklen_t)sizeof(client);
-  char input_buffer[50];
+
+Server::Server() {
+
+}
+
+int Server::init(unsigned int port){
+  int socket_fd;
+  struct sockaddr_in myself;
 
   socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -546,18 +548,25 @@ void Server::init(unsigned int port){
   if (::bind(socket_fd, (struct sockaddr*)&myself, sizeof(myself)) != 0) {
     //return 0;
   }
+  return socket_fd;
+}
 
-  listen(socket_fd, 2);
-  connection_fd = accept(socket_fd, (struct sockaddr*)&client, &client_size);
+void Server::run(int *socket_fd, char *key){
+  int connection_fd;
+  struct sockaddr_in client;
+  socklen_t client_size = (socklen_t)sizeof(client);
+  char input_buffer[50];
+
+  listen(*socket_fd, 2);
+  connection_fd = accept(*socket_fd, (struct sockaddr*)&client, &client_size);
 
   /* Identificando cliente 
   char ip_client[INET_ADDRSTRLEN];
   inet_ntop( AF_INET, &(client.sin_addr), ip_client, INET_ADDRSTRLEN );
   printf("IP que enviou: %s\n", ip_client);*/
-
   while (1) {
     recv(connection_fd, input_buffer, 10, 0);
-    Server::key = input_buffer[0];
+    *key = input_buffer[0];
     //printf("%s\n", input_buffer);
 
     /* Respondendo */
@@ -567,6 +576,5 @@ void Server::init(unsigned int port){
      // printf("Sucesso para enviar mensagem de retorno\n");
     }
   }
-
-  close(socket_fd);
+  close(*socket_fd);
 }

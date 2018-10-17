@@ -13,6 +13,13 @@
 #include <thread>
 #include <vector>
 
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include "01-playback.hpp"
 #include "oo_model.hpp"
 
@@ -68,7 +75,7 @@ int main ()
   int winX = 15;
   int winY = 51;
 
-  showStartFrog();
+  //showStartFrog();
   freopen("/dev/null", "w", stderr);
 
   //1 because of the botton besel and 2 because of the start safe zone
@@ -96,9 +103,10 @@ int main ()
 
   Teclado *teclado = new Teclado();
   teclado->init();
-
-  std::thread serverthread(Server::init,3001);
-
+  Server *server = new Server();
+  int socket_fd = server->init(3001);
+  char key = '0';
+  std::thread serverthread(Server::run, &socket_fd, &key);
   uint64_t t0;
   uint64_t t1;
   uint64_t deltaT;
@@ -116,6 +124,7 @@ int main ()
     //verifica se muda de nível.
     //Se sim, apaga as lanes anteriores e cria novas com o novo nível
     //Move o player para posição inicial
+
     if(nextLevel == 1) {
       nextLevel = 0;
       l->clearLanes();
@@ -124,8 +133,11 @@ int main ()
       player->resetPos();
     }
 
+
     // Atualiza modelo
     f->update(deltaT);
+
+    //printf("updated\n");
     touched = f->hasTouched();
 
     // Atualiza tela
@@ -156,7 +168,7 @@ int main ()
     }
     cPrev = c;
 
-    c2 = Server::key;
+    c2 = key;
     if (c2=='w') {
       if(player->getX() > 3)
         player->update(player->getX()-1,player->getY());
@@ -176,7 +188,7 @@ int main ()
     if (c2=='q') {
       break;
     }
-    Server::key = 0;
+    key = '0';
 
     // Verifica se tocou em algum bloco
 

@@ -126,6 +126,7 @@ void showSadFrog();
 
 class Server {
   public:
-    static char key;
-    static void init(unsigned int port);
+    Server();
+    int init(unsigned int port);
+    static void run(int *socket_fd, char *key);
 };
