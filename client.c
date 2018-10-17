@@ -62,25 +62,20 @@ int main() {
     c = teclado->getchar();
     if (c != cPrev){ //evita que o usuário deixe o botão pressionado para andar mais rápido
       if (c=='w') {
-        if(player->getX() > 3)
-          player->update(player->getX()-1,player->getY());
+        send(socket_fd, c, 2, 0);
       }
       if (c=='a') {
-        if(player->getY() > 1)
-          player->update(player->getX(),player->getY()-1);
+        send(socket_fd, c, 2, 0);
       }
       if (c=='s') {
-        if(player->getX() < laneStartX+2)
-          player->update(player->getX()+1,player->getY());
+        send(socket_fd, c, 2, 0);
       }
       if (c=='d') {
-        if(player->getY() < laneY+2)
-          player->update(player->getX(),player->getY()+1);
+        send(socket_fd, c, 2, 0);
       }
       if (c=='q') {
         break;
       }
-      send(socket_fd, c, 2, 0);
     }
     cPrev = c;
 
