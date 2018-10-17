@@ -20,6 +20,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <string>
+#include <cstring>
+
 #include "01-playback.hpp"
 #include "oo_model.hpp"
 
@@ -96,6 +99,9 @@ int main ()
   Player *player = new Player(laneStartX+2, laneY/2);
   ListaDeLanes *l = new ListaDeLanes();
 
+  RelevantData *rd = new RelevantData(*player, *l);
+  string buffer;
+
   Fisica *f = new Fisica(l,player);
 
   Teclado *teclado = new Teclado();
@@ -103,8 +109,9 @@ int main ()
 
   Server *server = new Server();
   int socket_fd = server->init(3001);
+  int connection_fd;
   char key = '0';
-  std::thread serverthread(Server::run, &socket_fd, &key);
+  std::thread serverthread(Server::run, &socket_fd, &key, &connection_fd);
 
   Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
   tela->init();
@@ -206,6 +213,11 @@ int main ()
       nextLevel++;
       playLevelUpSound();
     }
+    rd = new RelevantData(*player,*l);
+    rd->serialize(buffer);
+    char *bufferchar = new char[buffer.length()+1];
+    strcpy(bufferchar,buffer.c_str());
+    send(connection_fd, bufferchar, strlen(bufferchar), 0);
 
     // Condicao de parada
     if ( (t1-T) > 1000000 ) break;

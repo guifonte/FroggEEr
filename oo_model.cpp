@@ -553,30 +553,29 @@ int Server::init(unsigned int port){
   return socket_fd;
 }
 
-void Server::run(int *socket_fd, char *key){
-  int connection_fd;
+void Server::run(int *socket_fd, char *key, int *connection_fd){
   struct sockaddr_in client;
   socklen_t client_size = (socklen_t)sizeof(client);
   char input_buffer[50];
 
   listen(*socket_fd, 2);
-  connection_fd = accept(*socket_fd, (struct sockaddr*)&client, &client_size);
+  *connection_fd = accept(*socket_fd, (struct sockaddr*)&client, &client_size);
 
   /* Identificando cliente 
   char ip_client[INET_ADDRSTRLEN];
   inet_ntop( AF_INET, &(client.sin_addr), ip_client, INET_ADDRSTRLEN );
   printf("IP que enviou: %s\n", ip_client);*/
   while (1) {
-    recv(connection_fd, input_buffer, 10, 0);
+    recv(*connection_fd, input_buffer, 10, 0);
     *key = input_buffer[0];
     //printf("%s\n", input_buffer);
 
     /* Respondendo */
-    if (send(connection_fd, "PONG", 5, 0) < 0) {
+    /*if (send(*connection_fd, "PONG", 5, 0) < 0) {
       //printf("Erro ao enviar mensagem de retorno\n");
     } else {
      // printf("Sucesso para enviar mensagem de retorno\n");
-    }
+    }*/
   }
 
   close(*socket_fd);
@@ -586,9 +585,9 @@ RelevantData::RelevantData() {
 };
 
 
-RelevantData::RelevantData(Player *player, ListaDeLanes *l) {
-  this->data.player = player;
-  this->data.l = l;
+RelevantData::RelevantData(Player player, ListaDeLanes l) {
+  this->data->player = player;
+  this->data->l = l;
 }
 
 RelevantData::RelevantData(std::string buffer_in) {
@@ -604,5 +603,5 @@ void RelevantData::unserialize(std::string buffer_in) {
 }
 
 DataContainer RelevantData::dump() {
-  return this->data;
+  return *(this->data);
 }

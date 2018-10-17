@@ -127,22 +127,22 @@ class Server {
   public:
     Server();
     int init(unsigned int port);
-    static void run(int *socket_fd, char *key);
+    static void run(int *socket_fd, char *key, int *connection_fd);
 };
 
 class DataContainer {
   public:
-    Player *player;
-    ListaDeLanes *l;
+    Player player;
+    ListaDeLanes l;
 };
 
 class RelevantData {
   private:
-    DataContainer data;
+    DataContainer *data;
 
   public:
     RelevantData();
-    RelevantData(Player *player, ListaDeLanes *l);
+    RelevantData(Player player, ListaDeLanes l);
     RelevantData(std::string buffer_in);
     void serialize(std::string &buffer_out);
     void unserialize(std::string buffer_in);
