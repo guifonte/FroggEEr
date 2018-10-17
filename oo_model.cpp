@@ -202,6 +202,7 @@ std::vector<Lane*> *ListaDeLanes::getLanes() {
   return (this->lanes);
 }
 
+
 Fisica::Fisica(ListaDeLanes *lanes, Player *player) {
   this->lanes = lanes;
   this->player = player;
@@ -569,4 +570,28 @@ void Server::init(unsigned int port){
   }
 
   close(socket_fd);
+}
+
+RelevantData::RelevantData() {
+};
+
+RelevantData::RelevantData(ListaDeLanes lista, Player player) {
+  this->data.lista = lista;
+  this->data.player = player;
+}
+
+RelevantData::RelevantData(std::string buffer_in) {
+  this->unserialize(buffer_in);
+}
+
+void RelevantData::serialize(std::string &buffer_out) {
+  std::memcpy((void*)buffer_out.c_str(), &(this->data), sizeof(DataContainer));
+}
+
+void RelevantData::unserialize(std::string buffer_in) {
+  std::memcpy(&(this->data), (void*)buffer_in.c_str(), sizeof(DataContainer));
+}
+
+void RelevantData::dump() {
+  std::cout << this->data.lista << '\n' << this->data.player << '\n';
 }

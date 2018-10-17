@@ -21,6 +21,24 @@
 
 using namespace std;
 
+struct DataContainer {
+  ListaDeLanes lista;
+  Player player;
+};
+
+class RelevantData {
+  private:
+    DataContainer data;
+
+  public:
+    RelevantData();
+    RelevantData(ListaDeLanes lista, Player player);
+    RelevantData(std::string buffer_in);
+    void serialize(std::string &buffer_out);
+    void unserialize(std::string buffer_in);
+    void dump();
+};
+
 class Player {
   private:
   float startX;
@@ -38,20 +56,20 @@ class Player {
 
 class Lane {
   private:
-  int x;
-  int nivel;
-  float pos;
-  float velocidade;
+    int x;
+    int nivel;
+    float pos;
+    float velocidade;
   public:
-  string content;
-  Lane(int y, int nivel, int length, std::mt19937 *gen);
-  void update(float newPos);
-  void resetPos();
-  float getPos();
-  int getNivel();
-  int getX();
-  float getSpeed();
-  string getContent();
+    string content;
+    Lane(int y, int nivel, int length, std::mt19937 *gen);
+    void update(float newPos);
+    void resetPos();
+    float getPos();
+    int getNivel();
+    int getX();
+    float getSpeed();
+    string getContent();
 };
 
 class ListaDeLanes {
