@@ -98,15 +98,17 @@ int main ()
 
   Fisica *f = new Fisica(l,player);
 
-  Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
-  tela->init();
-
   Teclado *teclado = new Teclado();
   teclado->init();
+
   Server *server = new Server();
   int socket_fd = server->init(3001);
   char key = '0';
   std::thread serverthread(Server::run, &socket_fd, &key);
+
+  Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
+  tela->init();
+
   uint64_t t0;
   uint64_t t1;
   uint64_t deltaT;

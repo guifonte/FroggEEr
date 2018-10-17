@@ -576,5 +576,6 @@ void Server::run(int *socket_fd, char *key){
      // printf("Sucesso para enviar mensagem de retorno\n");
     }
   }
+  
   close(*socket_fd);
 }
