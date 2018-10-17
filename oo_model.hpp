@@ -138,10 +138,8 @@ class DataContainer {
 };
 
 class RelevantData {
-  private:
-    DataContainer *data;
-
   public:
+    DataContainer *data;
     RelevantData();
     RelevantData(Player player, ListaDeLanes l, int level);
     RelevantData(std::string buffer_in);

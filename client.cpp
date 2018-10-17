@@ -7,11 +7,12 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "oo_model.hpp"
+#include <iostream>
+
 
 int main() {
   int socket_fd;
   struct sockaddr_in target;
-  char character[2];
   char serverIp[16];
   
   printf("IP do servidor:\n");
@@ -38,15 +39,15 @@ int main() {
   char cPrev = 0;//char anterior clicado pelo teclado
   char key = '0';
 
-  RelevantData *rd = new RelevantData(*player, *l);
+  RelevantData *rd = new RelevantData();
   Teclado *teclado = new Teclado();
   teclado->init();
-
+  string buffer;
   char *bufferchar = new char[buffer.length()+1];
   recv(socket_fd, bufferchar, strlen(bufferchar), 0);
   rd->unserialize(bufferchar);
 
-  Tela *tela = new Tela(rd->player, rd->l, rd->level ,winX, winY, winX, winY);
+  Tela *tela = new Tela(&(rd->data->player), &(rd->data->l), &(rd->data->level) ,winX, winY, winX, winY);
   tela->init();
 
   while (1) {
@@ -61,16 +62,16 @@ int main() {
     c = teclado->getchar();
     if (c != cPrev){ //evita que o usuário deixe o botão pressionado para andar mais rápido
       if (c=='w') {
-        send(socket_fd, c, 2, 0);
+        send(socket_fd, &c, 2, 0);
       }
       if (c=='a') {
-        send(socket_fd, c, 2, 0);
+        send(socket_fd, &c, 2, 0);
       }
       if (c=='s') {
-        send(socket_fd, c, 2, 0);
+        send(socket_fd, &c, 2, 0);
       }
       if (c=='d') {
-        send(socket_fd, c, 2, 0);
+        send(socket_fd, &c, 2, 0);
       }
       if (c=='q') {
         break;
