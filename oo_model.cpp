@@ -17,6 +17,8 @@
 #include <string>
 #include <random>
 
+#include <cstring>
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -576,6 +578,31 @@ void Server::run(int *socket_fd, char *key){
      // printf("Sucesso para enviar mensagem de retorno\n");
     }
   }
-  
+
   close(*socket_fd);
+}
+
+RelevantData::RelevantData() {
+};
+
+
+RelevantData::RelevantData(Player *player, ListaDeLanes *l) {
+  this->data.player = player;
+  this->data.l = l;
+}
+
+RelevantData::RelevantData(std::string buffer_in) {
+  this->unserialize(buffer_in);
+}
+
+void RelevantData::serialize(std::string &buffer_out) {
+  std::memcpy((void*)buffer_out.c_str(), &(this->data), sizeof(DataContainer));
+}
+
+void RelevantData::unserialize(std::string buffer_in) {
+  std::memcpy(&(this->data), (void*)buffer_in.c_str(), sizeof(DataContainer));
+}
+
+DataContainer RelevantData::dump() {
+  return this->data;
 }
