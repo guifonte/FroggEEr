@@ -84,29 +84,6 @@ int main() {
     }
     cPrev = c;
 
-    c2 = key;
-    if (c2=='w') {
-      if(player->getX() > 3)
-        player->update(player->getX()-1,player->getY());
-    }
-    if (c2=='a') {
-      if(player->getY() > 1)
-        player->update(player->getX(),player->getY()-1);
-    }
-    if (c2=='s') {
-      if(player->getX() < laneStartX+2)
-        player->update(player->getX()+1,player->getY());
-    }
-    if (c2=='d') {
-      if(player->getY() < laneY+2)
-        player->update(player->getX(),player->getY()+1);
-    }
-    if (c2=='q') {
-      break;
-    }
-    send(socket_fd, c2, 2, 0);
-    key = '0';
-
     std::this_thread::sleep_for (std::chrono::milliseconds(100));
 
   }
