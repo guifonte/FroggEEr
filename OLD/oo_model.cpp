@@ -425,7 +425,7 @@ void Tela::stop() {
 }
 
 Tela::~Tela() {
-  this->stop();;
+  this->stop();
 }
 
 void delay(float number_of_seconds) 
@@ -440,8 +440,7 @@ void delay(float number_of_seconds)
     while (clock() < start_time + milli_seconds); 
 } 
 
-void showStartFrog ()
-{
+void showStartFrog(){
     FILE *fptr;
 
     if ((fptr = fopen("./res/froggEEr.txt","r")) == NULL){
