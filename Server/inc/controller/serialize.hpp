@@ -8,6 +8,7 @@ class DataContainer {
   public:
     Player player;
     ListaDeLanes l;
+    int level;
 };
 
 class RelevantData {
@@ -16,7 +17,7 @@ class RelevantData {
 
   public:
     RelevantData();
-    RelevantData(Player player, ListaDeLanes l);
+    RelevantData(Player player, ListaDeLanes l, int level);
     RelevantData(std::string buffer_in);
     void serialize(std::string &buffer_out);
     void unserialize(std::string buffer_in);
