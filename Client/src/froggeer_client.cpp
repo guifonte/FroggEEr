@@ -46,15 +46,17 @@ int main() {
   char cPrev = 0;//char anterior clicado pelo teclado
   char key = '0';
 
-  RelevantData *rd = new RelevantData();
   Teclado *teclado = new Teclado();
   teclado->init();
+
+  RelevantData *rd = new RelevantData();
   string buffer;
   char *bufferchar = new char[buffer.length()+1];
   recv(socket_fd, bufferchar, strlen(bufferchar), 0);
   rd->unserialize(bufferchar);
+  DataContainer *data = rd->dump();
 
-  Tela *tela = new Tela(&(rd->data->player), &(rd->data->l), &(rd->data->level) ,winX, winY, winX, winY);
+  Tela *tela = new Tela(&(data->player), &(data->l), &(data->level) ,winX, winY, winX, winY);
   tela->showStartFrog();
   tela->init();
 

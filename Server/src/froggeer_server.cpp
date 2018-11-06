@@ -57,7 +57,11 @@ int main ()
   int laneY = winY-2; //2 because of the left and right besel
   //3 for the upper header, 1 for the botton besel and 4 for the safe zones
   //but there are winX+1 lines, because of that, -7
-  int maxNumLanes = winX-7; 
+  //int maxNumLanes = winX-7;
+  int maxNumLanes = 8; 
+  int numOfLanes;
+  Lane lanes[8];
+  std::vector<Lane*> *vecLanes;
 
   int level = 1;
   int nextLevel = 1 ; //boolean que indica se é necessário mudar de nível e gerar novas lanes
@@ -70,8 +74,8 @@ int main ()
   Player *player = new Player(laneStartX+2, laneY/2);
   ListaDeLanes *l = new ListaDeLanes();
 
-  //RelevantData *rd = new RelevantData(*player, *l);
-  //string buffer;
+  RelevantData *rd;
+  string buffer;
 
   Fisica *f = new Fisica(l,player);
 
@@ -84,11 +88,11 @@ int main ()
   char key = '0';
   std::thread serverthread(Server::run, &socket_fd, &key, &connection_fd);
 
-  Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
-  tela->showStartFrog();
-  tela->init();
+  //Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
+  //tela->showStartFrog();
+  //tela->init();
 
-  Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
+  //Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
 
   uint64_t t0;
   uint64_t t1;
@@ -111,7 +115,7 @@ int main ()
     if(nextLevel == 1) {
       nextLevel = 0;
       l->clearLanes();
-      tela->clearLaneArea();
+      //tela->clearLaneArea();
       l->createLanes(maxNumLanes,laneY,laneStartX, level);
       player->resetPos();
     }
@@ -124,7 +128,7 @@ int main ()
     touched = f->hasTouched();
 
     // Atualiza tela
-    tela->update();
+    //tela->update();
 
     // Lê o teclado
     c = teclado->getchar();
@@ -176,7 +180,7 @@ int main ()
     // Verifica se tocou em algum bloco
 
     if(touched == 1){
-      soundManager->playKillSound(t0);
+      //soundManager->playKillSound(t0);
       player->resetPos();
       touched = 0; 
     }
@@ -185,13 +189,22 @@ int main ()
     if(player->getX() <= (laneStartX-(l->getNumberOfLanes()))) {
       level++;
       nextLevel++;
-      soundManager->playLevelUpSound(t0);
+      //soundManager->playLevelUpSound(t0);
     }
-    //rd = new RelevantData(*player,*l);
-    //rd->serialize(buffer);
-    //char *bufferchar = new char[buffer.length()+1];
-    //strcpy(bufferchar,buffer.c_str());
-    //send(connection_fd, bufferchar, strlen(bufferchar), 0);
+    numOfLanes = l->getNumberOfLanes();
+    vecLanes = l->getLanes();
+    for(int i = 0; i < numOfLanes; i++){
+      lanes[i] = *(*vecLanes)[i];
+    }
+    printf("Pre rd\n");
+    rd = new RelevantData(*player, lanes, level,numOfLanes);
+    printf("Pre serialize\n");
+    rd->serialize(buffer);
+    char *bufferchar = new char[buffer.length()+1];
+    printf("%lu\n",buffer.length());
+    strcpy(bufferchar,buffer.c_str());
+    printf("Pre send\n");
+    send(connection_fd, bufferchar, strlen(bufferchar), 0);
 
     // Condicao de parada
     if ( (t1-T) > 1000000 ) break;
@@ -200,7 +213,7 @@ int main ()
 
   }
   
-  tela->stop();
+  //tela->stop();
   teclado->stop();
   //tela->showSadFrog();
   return 0;
