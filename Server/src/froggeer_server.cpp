@@ -59,9 +59,9 @@ int main ()
   //but there are winX+1 lines, because of that, -7
   //int maxNumLanes = winX-7;
   int maxNumLanes = 8; 
-  /*int numOfLanes;
+  int numOfLanes;
   Lane lanes[8];
-  std::vector<Lane*> *vecLanes;*/
+  std::vector<Lane*> *vecLanes;
 
   int level = 1;
   int nextLevel = 1 ; //boolean que indica se é necessário mudar de nível e gerar novas lanes
@@ -92,7 +92,7 @@ int main ()
   tela->showStartFrog();
   tela->init();
 
-  Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
+  //Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
 
   uint64_t t0;
   uint64_t t1;
@@ -180,7 +180,7 @@ int main ()
     // Verifica se tocou em algum bloco
 
     if(touched == 1){
-      soundManager->playKillSound(t0);
+      //soundManager->playKillSound(t0);
       player->resetPos();
       touched = 0; 
     }
@@ -189,14 +189,14 @@ int main ()
     if(player->getX() <= (laneStartX-(l->getNumberOfLanes()))) {
       level++;
       nextLevel++;
-      soundManager->playLevelUpSound(t0);
+      //soundManager->playLevelUpSound(t0);
     }
-    /*numOfLanes = l->getNumberOfLanes();
+    numOfLanes = l->getNumberOfLanes();
     vecLanes = l->getLanes();
     for(int i = 0; i < numOfLanes; i++){
       lanes[i] = *(*vecLanes)[i];
     }
-    printf("Pre rd\n");
+    /*printf("Pre rd\n");
     rd = new RelevantData(*player, lanes, level,numOfLanes);
     printf("Pre serialize\n");
     rd->serialize(buffer);
@@ -215,6 +215,6 @@ int main ()
   
   tela->stop();
   teclado->stop();
-  //tela->showSadFrog();
+  tela->showSadFrog();
   return 0;
 }
