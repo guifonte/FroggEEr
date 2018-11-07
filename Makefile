@@ -9,8 +9,8 @@ client:
 	g++ -o froggeer_client Client/src/froggeer_client.cpp Client/src/model/* Client/src/view/* Client/src/controller/* $(FLAGS)
 
 runServer:server
-	./frogger_server
+	./froggeer_server
 	
 runClient:client
-	./frogger_client
+	./froggeer_client
 
