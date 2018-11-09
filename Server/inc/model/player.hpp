@@ -9,6 +9,7 @@ class Player {
   float y;
 
   public:
+  Player();
   Player(float x, float y);
   void update(float newX,float newY);
   void resetPos();

@@ -2,34 +2,61 @@
 #include "../../inc/model/lane.hpp"
 #include "../../inc/model/player.hpp"
 
+#include <iostream>
+#include <fstream>
+#include <jsoncpp/json/json.h> // or jsoncpp/json.h , or json/json.h etc.
+
 #include <string>
 #include <cstring>
 
-RelevantData::RelevantData() {
+using namespace std;
+
+DataContainer::DataContainer() {
+  this->lvec = new std::vector<Lane*>(0);
 };
 
+RelevantData::RelevantData() {
+  this->data = new DataContainer();
+};
 
-RelevantData::RelevantData(Player player, Lane lanes[], int level, int numberOfLanes) {
-  printf("Pre player\n");
+RelevantData::RelevantData(Player player, ListaDeLanes *l, int level) {
   this->data->player = player;
-  printf("Pre lanes\n");
-  for(int i = 0; i < numberOfLanes;i++){
-    this->data->lanes[i] = *(new Lane());
-    printf("lane %d de %d\n",i,numberOfLanes);
-    this->data->lanes[i] = lanes[i];
-  }
-  printf("Pre level\n");
   this->data->level = level;
-  printf("Pre numoflanes\n");
-  this->data->numberOfLanes = numberOfLanes;
+  this->data->lvec = l->getLanes();
 }
 
 RelevantData::RelevantData(std::string buffer_in) {
   this->unserialize(buffer_in);
 }
 
-void RelevantData::serialize(std::string &buffer_out) {
-  std::memcpy((void*)buffer_out.c_str(), &(this->data), sizeof(DataContainer));
+string RelevantData::serialize() {
+  Json::Value root;
+  Json::Value player;
+  Json::Value lanes;
+  //player["char"] = 'A';
+  //root["nivel"] = this->data->level;
+  player["x"] = 10;
+  printf("playerX!\n");
+  float x = this->data->player.getX();
+  printf("%lf\n",x);
+  
+  printf("playerY!\n");
+  player["y"] = this->data->player.getY();
+  printf("lanes!\n");
+  int numcount = (*(this->data->lvec)).size();
+  for(int i = 0; i < numcount; i++) {
+      lanes[i]["x"] = ((*(this->data->lvec))[i])->getX();
+      lanes[i]["pos"] = ((*(this->data->lvec))[i])->getPos();
+      lanes[i]["content"] = ((*(this->data->lvec))[i])->getContent();
+  }
+  root["lanes"] = lanes;
+  root["player"] = player;
+  //etc
+
+  Json::FastWriter fast;
+  Json::StyledWriter styled;
+  string sFast = fast.write(root);
+  return sFast;
 }
 
 void RelevantData::unserialize(std::string buffer_in) {

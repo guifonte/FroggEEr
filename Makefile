@@ -1,4 +1,4 @@
-FLAGS=-lportaudio -lncurses -lpthread -std=c++11
+FLAGS=-lportaudio -lncurses -lpthread -ljsoncpp -std=c++11
 
 all: server client
 

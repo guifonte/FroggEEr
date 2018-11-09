@@ -4,12 +4,19 @@
 #include "../model/lane.hpp"
 #include "../model/player.hpp"
 
+#include <iostream>
+#include <fstream>
+#include <jsoncpp/json/json.h> // or jsoncpp/json.h , or json/json.h etc.
+#include <cstring>
+
+using namespace std;
+
 class DataContainer {
   public:
     Player player;
-    Lane lanes[8];
-    int numberOfLanes;
+    vector<Lane*> *lvec;
     int level;
+    DataContainer();
 };
 
 class RelevantData {
@@ -18,9 +25,9 @@ class RelevantData {
 
   public:
     RelevantData();
-    RelevantData(Player player, Lane lanes[], int level, int numberOfLanes);
+    RelevantData(Player player, ListaDeLanes *l, int level);
     RelevantData(std::string buffer_in);
-    void serialize(std::string &buffer_out);
+    string serialize();
     void unserialize(std::string buffer_in);
     DataContainer *dump();
 };

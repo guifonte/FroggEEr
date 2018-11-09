@@ -74,8 +74,9 @@ int main ()
   Player *player = new Player(laneStartX+2, laneY/2);
   ListaDeLanes *l = new ListaDeLanes();
 
-  /*RelevantData *rd;
-  string buffer;*/
+  RelevantData *rd;
+  string bufferStr;
+  std::vector<char> buffer;
 
   Fisica *f = new Fisica(l,player);
 
@@ -84,15 +85,16 @@ int main ()
 
   Server *server = new Server();
   int socket_fd = server->init(3001);
-  int connection_fd;
+  int connection_fd = 0;
   char key = '0';
   std::thread serverthread(Server::run, &socket_fd, &key, &connection_fd);
 
-  Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
-  tela->showStartFrog();
-  tela->init();
+  //Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
+  //tela->showStartFrog();
+  //tela->init();
 
   //Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
+
 
   uint64_t t0;
   uint64_t t1;
@@ -115,7 +117,7 @@ int main ()
     if(nextLevel == 1) {
       nextLevel = 0;
       l->clearLanes();
-      tela->clearLaneArea();
+      //tela->clearLaneArea();
       l->createLanes(maxNumLanes,laneY,laneStartX, level);
       player->resetPos();
     }
@@ -128,7 +130,7 @@ int main ()
     touched = f->hasTouched();
 
     // Atualiza tela
-    tela->update();
+    //tela->update();
 
     // Lê o teclado
     c = teclado->getchar();
@@ -191,20 +193,24 @@ int main ()
       nextLevel++;
       //soundManager->playLevelUpSound(t0);
     }
-    numOfLanes = l->getNumberOfLanes();
-    vecLanes = l->getLanes();
-    for(int i = 0; i < numOfLanes; i++){
-      lanes[i] = *(*vecLanes)[i];
+
+    if(connection_fd == 0){
+      
+      printf("rel data!\n");
+      rd = new RelevantData(*player, l, level);
+      printf("serialize!\n");
+      bufferStr = rd->serialize();
+      printf("bufclear!\n");
+      buffer.clear();
+      buffer.resize(bufferStr.length() + 1);
+      std::copy(bufferStr.c_str(), bufferStr.c_str() + bufferStr.length() + 1, buffer.begin());
+      printf("%lu\n",buffer.size());
+      if (send(connection_fd, &buffer[0], buffer.size(), MSG_NOSIGNAL) == -1) {
+        printf("Usuario desconectou!\n");
+      }
+      printf("%s",bufferStr.c_str());
     }
-    /*printf("Pre rd\n");
-    rd = new RelevantData(*player, lanes, level,numOfLanes);
-    printf("Pre serialize\n");
-    rd->serialize(buffer);
-    char *bufferchar = new char[buffer.length()+1];
-    printf("%lu\n",buffer.length());
-    strcpy(bufferchar,buffer.c_str());
-    printf("Pre send\n");
-    send(connection_fd, bufferchar, strlen(bufferchar), 0);*/
+
 
     // Condicao de parada
     if ( (t1-T) > 1000000 ) break;
@@ -213,8 +219,8 @@ int main ()
 
   }
   
-  tela->stop();
+  //tela->stop();
   teclado->stop();
-  tela->showSadFrog();
+  //tela->showSadFrog();
   return 0;
 }
