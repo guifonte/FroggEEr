@@ -17,7 +17,9 @@
 //control
 #include "../inc/controller/serialize.hpp"
 
-
+#include <iostream>
+#include <fstream>
+#include <jsoncpp/json/json.h> // or jsoncpp/json.h , or json/json.h etc.
 
 int main() {
   int socket_fd;
@@ -25,13 +27,14 @@ int main() {
   char serverIp[16];
   
   printf("IP do servidor:\n");
-  scanf("%s", serverIp);	
+  //scanf("%s", serverIp);	
   socket_fd = socket(AF_INET, SOCK_STREAM, 0);
   printf("Socket criado\n");
 
   target.sin_family = AF_INET;
   target.sin_port = htons(3001);
-  inet_aton(serverIp, &(target.sin_addr));
+  //inet_aton(serverIp, &(target.sin_addr));
+  inet_aton("127.0.0.1", &(target.sin_addr));
   printf("Tentando conectar\n");
   if (connect(socket_fd, (struct sockaddr*)&target, sizeof(target)) != 0) {
     printf("Problemas na conexao\n");
@@ -49,22 +52,94 @@ int main() {
   Teclado *teclado = new Teclado();
   teclado->init();
 
-  RelevantData *rd = new RelevantData();
-  string buffer;
-  char *bufferchar = new char[buffer.length()+1];
-  recv(socket_fd, bufferchar, strlen(bufferchar), 0);
-  rd->unserialize(bufferchar);
-  DataContainer *data = rd->dump();
+  char buffer[2048];
+  int msg_len = 0;
+  //RelevantData *rd = new RelevantData();
+  //string buffer;
+  //char *bufferchar = new char[buffer.length()+1];
 
-  Tela *tela = new Tela(&(data->player), &(data->l), &(data->level) ,winX, winY, winX, winY);
-  tela->showStartFrog();
+  //std::vector<Lane*> *vecLanes;
+  Player *player = new Player();
+  ListaDeLanes *l = new ListaDeLanes();
+  int level;
+  float x;
+  float y;
+  int countLanes;
+  int laneX;
+  float lanePos;
+  string content;
+
+  
+  while(msg_len <= 0){
+    msg_len = recv(socket_fd, buffer, 2048, MSG_DONTWAIT);
+    if (msg_len > 0) {
+      printf("[%d] RECEBI:\n%s", msg_len, buffer);
+      Json::Value root;
+      Json::Reader reader;
+      bool b = reader.parse(buffer, root);
+      if (!b) {}
+        //cout << "Error: " << reader.getFormattedErrorMessages();
+      else {
+        l->clearLanes();
+        x = root["player"]["x"].asLargestInt();
+        y = root["player"]["y"].asLargestInt();
+        level = root["level"].asLargestInt();
+        player->update(x,y);
+        countLanes = root["lanes"].size();
+        for(int i = 0; i < countLanes; i++){
+          laneX = root["lanes"][i]["x"].asLargestInt();
+          lanePos = root["lanes"][i]["pos"].asFloat();
+          content = root["lanes"][i]["content"].asString();
+          Lane *tempLane = new Lane(laneX, lanePos, content);
+          l->addLane(tempLane);
+        }
+      }
+    } else {
+      printf("msg_len =0\n");
+    }
+  }
+
+  //rd->unserialize(bufferchar);
+  //DataContainer *data = rd->dump();
+
+  //Tela *tela = new Tela(&(data->player), &(data->l), &(data->level) ,winX, winY, winX, winY);
+  Tela *tela = new Tela(player,l,&level,winX, winY, winX, winY);
+  //tela->showStartFrog();
   tela->init();
-
+  tela->update();
   while (1) {
 
-    recv(socket_fd, bufferchar, strlen(bufferchar), 0);
-    rd->unserialize(bufferchar);
-    
+    //recv(socket_fd, bufferchar, strlen(bufferchar), 0);
+    //rd->unserialize(bufferchar);
+    msg_len = recv(socket_fd, buffer, 2048, MSG_DONTWAIT);
+    if (msg_len > 0) {
+      //printf("[%d] RECEBI:\n%s", msg_len, buffer);
+      Json::Value root;
+      Json::Reader reader;
+      bool b = reader.parse(buffer, root);
+      if (!b) {}
+        //cout << "Error: " << reader.getFormattedErrorMessages();
+      else {
+        l->clearLanes();
+        x = root["player"]["x"].asLargestInt();
+        y = root["player"]["y"].asLargestInt();
+        level = root["level"].asLargestInt();
+        player->update(x,y);
+        countLanes = root["lanes"].size();
+        for(int i = 0; i < countLanes; i++){
+          laneX = root["lanes"][i]["x"].asLargestInt();
+          lanePos = root["lanes"][i]["pos"].asFloat();
+          content = root["lanes"][i]["content"].asString();
+          Lane *tempLane = new Lane(laneX, lanePos, content);
+          l->addLane(tempLane);
+        }
+      }
+    } else {
+      //printf("msg_len =0");
+    }
+
+
+
     // Atualiza tela
     tela->update();
 

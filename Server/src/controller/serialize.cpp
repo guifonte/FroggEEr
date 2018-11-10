@@ -31,17 +31,20 @@ RelevantData::RelevantData(std::string buffer_in) {
 
 string RelevantData::serialize() {
   Json::Value root;
-  Json::Value player;
+  Json::Value playerJson;
   Json::Value lanes;
   //player["char"] = 'A';
   //root["nivel"] = this->data->level;
-  player["x"] = 10;
+  
   printf("playerX!\n");
   float x = this->data->player.getX();
+  root["value"] = 10;
   printf("%lf\n",x);
+  playerJson["x"] = x;
+  
   
   printf("playerY!\n");
-  player["y"] = this->data->player.getY();
+  playerJson["y"] = this->data->player.getY();
   printf("lanes!\n");
   int numcount = (*(this->data->lvec)).size();
   for(int i = 0; i < numcount; i++) {
@@ -50,7 +53,7 @@ string RelevantData::serialize() {
       lanes[i]["content"] = ((*(this->data->lvec))[i])->getContent();
   }
   root["lanes"] = lanes;
-  root["player"] = player;
+  root["player"] = playerJson;
   //etc
 
   Json::FastWriter fast;

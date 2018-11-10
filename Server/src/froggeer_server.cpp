@@ -60,7 +60,7 @@ int main ()
   //int maxNumLanes = winX-7;
   int maxNumLanes = 8; 
   int numOfLanes;
-  Lane lanes[8];
+  //Lane lanes[8];
   std::vector<Lane*> *vecLanes;
 
   int level = 1;
@@ -193,23 +193,51 @@ int main ()
       nextLevel++;
       //soundManager->playLevelUpSound(t0);
     }
-
-    if(connection_fd == 0){
       
-      printf("rel data!\n");
-      rd = new RelevantData(*player, l, level);
-      printf("serialize!\n");
-      bufferStr = rd->serialize();
-      printf("bufclear!\n");
-      buffer.clear();
-      buffer.resize(bufferStr.length() + 1);
-      std::copy(bufferStr.c_str(), bufferStr.c_str() + bufferStr.length() + 1, buffer.begin());
-      printf("%lu\n",buffer.size());
-      if (send(connection_fd, &buffer[0], buffer.size(), MSG_NOSIGNAL) == -1) {
-        printf("Usuario desconectou!\n");
-      }
-      printf("%s",bufferStr.c_str());
+    /*printf("rel data!\n");
+    rd = new RelevantData(*player, l, level);
+    printf("serialize!\n");
+    bufferStr = rd->serialize();
+    printf("bufclear!\n");*/
+    Json::Value root;
+    Json::Value playerJson;
+    Json::Value lanesJson;
+    //player["char"] = 'A';
+    //root["nivel"] = this->data->level;
+
+    //printf("playerX!\n");
+    float x = player->getX();
+    //printf("%lf\n",x);
+    playerJson["x"] = x;
+
+
+    //printf("playerY!\n");
+    playerJson["y"] = player->getY();
+    //printf("lanes!\n");
+    vector<Lane*> *lvec = l->getLanes();
+    int numcount = (*lvec).size();
+    for(int i = 0; i < numcount; i++) {
+        lanesJson[i]["x"] = (*lvec)[i]->getX();
+        lanesJson[i]["pos"] = (*lvec)[i]->getPos();
+        lanesJson[i]["content"] = (*lvec)[i]->getContent();
     }
+    root["lanes"] = lanesJson;
+    root["player"] = playerJson;
+    root["level"] = level;
+    //etc
+
+    Json::FastWriter fast;
+    //Json::StyledWriter styled;
+    bufferStr = fast.write(root);
+    buffer.clear();
+    buffer.resize(bufferStr.length() + 1);
+    std::copy(bufferStr.c_str(), bufferStr.c_str() + bufferStr.length() + 1, buffer.begin());
+    printf("%lu\n",buffer.size());
+    if (send(connection_fd, &buffer[0], buffer.size(), MSG_NOSIGNAL) == -1) {
+      printf("Usuario desconectou!\n");
+    }
+    //printf("%s",bufferStr.c_str());
+    
 
 
     // Condicao de parada

@@ -31,6 +31,14 @@ string Lane::getContent() {
 	Lane é o objeto de uma rua do frogger o qual o player
 	precisa passar sem encostar em nenhum dos objetos.
 */
+Lane::Lane(){
+  
+}
+Lane::Lane(int x, float pos, string content){
+  this->x = x;
+  this->pos = pos;
+  this->content = content;
+}
 Lane::Lane(int x, int nivel, int length, std::mt19937 *gen) {
   int makeGap = rand()%(2); // escolhe se a lane começa com uma lacuna ou com um obstáculo
   int tempLength;

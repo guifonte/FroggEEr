@@ -14,7 +14,9 @@ class Lane {
   float velocidade;
   public:
   string content;
+  Lane();
   Lane(int y, int nivel, int length, std::mt19937 *gen);
+  Lane(int x, float pos, string content);
   void update(float newPos);
   void resetPos();
   float getPos();

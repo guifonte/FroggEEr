@@ -1,5 +1,9 @@
 #include "../../inc/model/player.hpp"
 
+Player::Player() {
+  
+}
+
 Player::Player(float x, float y) {
   this->startX = x;
   this->startY = y;
