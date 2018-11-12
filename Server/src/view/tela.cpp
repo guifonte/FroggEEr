@@ -20,6 +20,7 @@ void Tela::init() {
   initscr();			       /* Start curses mode 		*/
 	raw();				         /* Line buffering disabled	*/
   curs_set(0);           /* Do not display cursor */
+  noecho();       /* Do not output char to screen */
 
   //Desenha bordas da tela
   for(int i = 0; i < this->maxI+1; i++) {
