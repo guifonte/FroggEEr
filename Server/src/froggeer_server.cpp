@@ -232,8 +232,12 @@ int main ()
     buffer.resize(bufferStr.length() + 1);
     std::copy(bufferStr.c_str(), bufferStr.c_str() + bufferStr.length() + 1, buffer.begin());
     printf("%lu\n",buffer.size());
-    if (send(connection_fd, &buffer[0], buffer.size(), MSG_NOSIGNAL) == -1) {
-      printf("Usuario desconectou!\n");
+    for (int user_iterator=0; user_iterator<MAX_CONEXOES; user_iterator++) {
+      if (Server::conexao_usada[user_iterator] == 1) {
+        if (send(Server::connection_fd[user_iterator], &buffer[0], buffer.size(), MSG_NOSIGNAL) == -1) {
+          printf("Usuario %d desconectou!\n", user_iterator);
+        }
+      }
     }
     //printf("%s",bufferStr.c_str());
     
