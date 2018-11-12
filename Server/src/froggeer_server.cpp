@@ -36,7 +36,6 @@
 #include "../inc/controller/serialize.hpp"
 
 
-
 using namespace std::chrono;
 
 uint64_t get_now_ms() {
@@ -72,6 +71,7 @@ int main ()
   char cPrev = 0;//char anterior clicado pelo teclado
 
   Player *player = new Player(laneStartX+2, laneY/2);
+  ListaDePlayers *lp = new ListaDePlayers();
   ListaDeLanes *l = new ListaDeLanes();
 
   RelevantData *rd;
@@ -85,9 +85,8 @@ int main ()
 
   Server *server = new Server();
   int socket_fd = server->init(3001);
-  int connection_fd = 0;
   char key = '0';
-  std::thread serverthread(Server::run, &socket_fd, &key, &connection_fd);
+  std::thread serverthread(Server::run, &socket_fd, &key);
 
   //Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
   //tela->showStartFrog();

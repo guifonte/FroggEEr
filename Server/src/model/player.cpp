@@ -28,3 +28,16 @@ void Player::resetPos(){
   this->x = this->startX;
   this->y = this->startY;
 }
+
+ListaDePlayers::ListaDePlayers() {
+  this->players = new std::vector<Player*>(0);
+  this->numberOfplayers = 0;
+}
+
+void ListaDePlayers::addPlayer(Player *l) {
+  (this->players)->push_back(l);
+}
+
+void ListaDePlayers::clearPlayers() {
+  (this->players)->clear();
+}
