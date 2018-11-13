@@ -71,23 +71,41 @@ int main ()
   char c,c2;//char clicado no teclado
   char cPrev = 0;//char anterior clicado pelo teclado
 
-  Player *player = new Player(laneStartX+2, laneY/2);
+  ListaDePlayers *lp = new ListaDePlayers();
   ListaDeLanes *l = new ListaDeLanes();
+
+  for (int i=0; i<MAX_CONEXOES; i++) {
+    // fix start position
+    Player *player = new Player(laneStartX+2, laneY/2);
+    lp->addPlayer(player);
+  }
 
   RelevantData *rd;
   string bufferStr;
   std::vector<char> buffer;
 
-  Fisica *f = new Fisica(l,player);
+  Fisica *f = new Fisica(l,lp);
 
   Teclado *teclado = new Teclado();
   teclado->init();
 
   Server *server = new Server();
   int socket_fd = server->init(3001);
-  int connection_fd = 0;
-  char key = '0';
-  std::thread serverthread(Server::run, &socket_fd, &key, &connection_fd);
+  //int connection_fd = 0;
+  int *connection_fd;
+  
+  connection_fd = server->accept_connections(socket_fd);
+  
+  // char key = '0';
+  // std::thread serverthread(Server::run, &socket_fd, &key, &connection_fd);
+
+  char *key;
+
+  for (int i=0; i<MAX_CONEXOES; i++) {
+   *(key+i) = '0';
+  }
+
+  std::thread serverthread(Server::run, &socket_fd, key, &connection_fd);
 
   //Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
   //tela->showStartFrog();
@@ -119,7 +137,10 @@ int main ()
       l->clearLanes();
       //tela->clearLaneArea();
       l->createLanes(maxNumLanes,laneY,laneStartX, level);
-      player->resetPos();
+      std::vector<Player *> *players = lp->getPlayers();
+      for(int i = 0; i < (*players).size(); i++) {
+        (*players)[i]->resetPos();
+      }
     }
 
 

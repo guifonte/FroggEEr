@@ -2,9 +2,9 @@
 #include "../../inc/model/lane.hpp"
 #include "../../inc/model/player.hpp"
 
-Fisica::Fisica(ListaDeLanes *lanes, Player *player) {
+Fisica::Fisica(ListaDeLanes *lanes, ListaDePlayers *players) {
   this->lanes = lanes;
-  this->player = player;
+  this->players = players;
 }
 
 void Fisica::update(float deltaT) {

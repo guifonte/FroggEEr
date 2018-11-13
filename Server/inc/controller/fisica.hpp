@@ -7,10 +7,10 @@
 class Fisica {
   private:
     ListaDeLanes *lanes;
-    Player *player;
+    ListaDePlayers *players;
 
   public:
-    Fisica(ListaDeLanes *lanes, Player *player);
+    Fisica(ListaDeLanes *lanes, ListaDePlayers *players);
     int hasTouched();
     void update(float deltaT);
 };
