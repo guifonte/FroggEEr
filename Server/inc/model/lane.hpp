@@ -12,6 +12,7 @@ class Lane {
   int nivel;
   float pos;
   float velocidade;
+  
   public:
   string content;
   Lane();

@@ -24,8 +24,9 @@ void Fisica::update(float deltaT) {
   como cada lane é um vetor, é apenas necessário verificar
   se a posição que o player está é a mesma que um < no vetor.
 */
-int Fisica::hasTouched(){
+int Fisica::hasTouched(Player *player){
   std::vector<Lane *> *l = this->lanes->getLanes();
+
   for(int i = 0; i < (*l).size(); i++) {
     if((*l)[i]->getX() == player->getX()){
       if(player->getY()>=(*l)[i]->getPos()){

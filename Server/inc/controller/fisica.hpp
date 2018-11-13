@@ -11,7 +11,7 @@ class Fisica {
 
   public:
     Fisica(ListaDeLanes *lanes, ListaDePlayers *players);
-    int hasTouched();
+    int hasTouched(Player *player);
     void update(float deltaT);
 };
 

@@ -121,6 +121,7 @@ int main ()
 
   T = get_now_ms();
   t1 = T;
+  std::vector<Player *> *players = lp->getPlayers();
 
   while (1) {
     // Atualiza timers
@@ -137,84 +138,102 @@ int main ()
       l->clearLanes();
       //tela->clearLaneArea();
       l->createLanes(maxNumLanes,laneY,laneStartX, level);
-      std::vector<Player *> *players = lp->getPlayers();
       for(int i = 0; i < (*players).size(); i++) {
         (*players)[i]->resetPos();
       }
     }
 
-
     // Atualiza modelo
     f->update(deltaT);
 
-    //printf("updated\n");
-    touched = f->hasTouched();
+    touched = 0;
 
+    //printf("updated\n");
+    for (int i = 0; i < (*players).size(); i++) {
+      touched = f->hasTouched((*players)[i]);
+          // Verifica se tocou em algum bloco
+      if(touched == 1){
+        //soundManager->playKillSound(t0);
+        (*players)[i]->resetPos();
+        touched = 0; 
+      }
+    }
     // Atualiza tela
     //tela->update();
 
-    // Lê o teclado
-    c = teclado->getchar();
-    if (c != cPrev){ //evita que o usuário deixe o botão pressionado para andar mais rápido
-      if (c=='w') {
-        if(player->getX() > 3)
-          player->update(player->getX()-1,player->getY());
-      }
-      if (c=='a') {
-        if(player->getY() > 1)
-          player->update(player->getX(),player->getY()-1);
-      }
-      if (c=='s') {
-        if(player->getX() < laneStartX+2)
-          player->update(player->getX()+1,player->getY());
-      }
-      if (c=='d') {
-        if(player->getY() < laneY+2)
-          player->update(player->getX(),player->getY()+1);
-      }
-      if (c=='q') {
-        break;
-      }
-    }
-    cPrev = c;
+    // // Lê o teclado
+    // c = teclado->getchar();
+    // if (c != cPrev){ //evita que o usuário deixe o botão pressionado para andar mais rápido
+    //   if (c=='w') {
+    //     if(player->getX() > 3)
+    //       player->update(player->getX()-1,player->getY());
+    //   }
+    //   if (c=='a') {
+    //     if(player->getY() > 1)
+    //       player->update(player->getX(),player->getY()-1);
+    //   }
+    //   if (c=='s') {
+    //     if(player->getX() < laneStartX+2)
+    //       player->update(player->getX()+1,player->getY());
+    //   }
+    //   if (c=='d') {
+    //     if(player->getY() < laneY+2)
+    //       player->update(player->getX(),player->getY()+1);
+    //   }
+    //   if (c=='q') {
+    //     break;
+    //   }
+    // }
+    // cPrev = c;
 
-    c2 = key;
-    if (c2=='w') {
-      if(player->getX() > 3)
-        player->update(player->getX()-1,player->getY());
-    }
-    if (c2=='a') {
-      if(player->getY() > 1)
-        player->update(player->getX(),player->getY()-1);
-    }
-    if (c2=='s') {
-      if(player->getX() < laneStartX+2)
-        player->update(player->getX()+1,player->getY());
-    }
-    if (c2=='d') {
-      if(player->getY() < laneY+2)
-        player->update(player->getX(),player->getY()+1);
-    }
-    if (c2=='q') {
-      break;
-    }
-    key = '0';
+    // c2 = key;
+    // if (c2=='w') {
+    //   if(player->getX() > 3)
+    //     player->update(player->getX()-1,player->getY());
+    // }
+    // if (c2=='a') {
+    //   if(player->getY() > 1)
+    //     player->update(player->getX(),player->getY()-1);
+    // }
+    // if (c2=='s') {
+    //   if(player->getX() < laneStartX+2)
+    //     player->update(player->getX()+1,player->getY());
+    // }
+    // if (c2=='d') {
+    //   if(player->getY() < laneY+2)
+    //     player->update(player->getX(),player->getY()+1);
+    // }
+    // if (c2=='q') {
+    //   break;
+    // }
+    // key = '0';
 
-    // Verifica se tocou em algum bloco
-
-    if(touched == 1){
-      //soundManager->playKillSound(t0);
-      player->resetPos();
-      touched = 0; 
-    }
-    
-    // Verifica se atravessou as lanes
-    if(player->getX() <= (laneStartX-(l->getNumberOfLanes()))) {
-      level++;
-      nextLevel++;
-      //soundManager->playLevelUpSound(t0);
-    }
+   
+    // // Verifica se atravessou as lanes
+    // if(player->getX() <= (laneStartX-(l->getNumberOfLanes()))) {
+    //   level++;
+    //   nextLevel++;
+    //   //soundManager->playLevelUpSound(t0);
+    // }
       
+    for (int i = 0; i < (*players).size(); i++) {
+      if((*players)[i]->getX() <= (laneStartX-(l->getNumberOfLanes()))) {
+        (*players)[i]->levelUp();
+        //soundManager->playLevelUpSound(t0);
+      }
+    }
+
+      nextLevel++;
+
+      touched = f->hasTouched((*players)[i]);
+          // Verifica se tocou em algum bloco
+      if(touched == 1){
+        //soundManager->playKillSound(t0);
+        (*players)[i]->resetPos();
+        touched = 0; 
+      }
+    }
+
     /*printf("rel data!\n");
     rd = new RelevantData(*player, l, level);
     printf("serialize!\n");

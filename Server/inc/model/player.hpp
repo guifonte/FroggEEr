@@ -9,6 +9,7 @@ class Player {
   float startY;
   float x;
   float y;
+  int level;
 
   public:
   Player();
@@ -17,6 +18,8 @@ class Player {
   void resetPos();
   float getX();
   float getY();
+  int getLevel();
+  void levelUp();
 };
 
 class ListaDePlayers {

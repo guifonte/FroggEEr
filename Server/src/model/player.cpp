@@ -24,6 +24,15 @@ float Player::getY() {
   return this->y;
 }
 
+int Player::getLevel() {
+  return this->level;
+}
+
+void Player::levelUp() {
+  this->level++;
+}
+
+
 void Player::resetPos(){
   this->x = this->startX;
   this->y = this->startY;
