@@ -6,7 +6,7 @@
 
 class Tela {
   private:
-    Player *playerAtual, *playerAnterior;
+    ListaDePlayers *playersAtuais, *playersAnteriores;
     ListaDeLanes *lanes;
     int *level;
     int maxI, maxJ;
@@ -14,7 +14,7 @@ class Tela {
     void static delay(float number_of_seconds);
 
   public:
-    Tela(Player *player, ListaDeLanes *lanes, int *level, int maxI, int maxJ, float maxX, float maxY);
+    Tela(ListaDePlayers *players, ListaDeLanes *lanes, int *level, int maxI, int maxJ, float maxX, float maxY);
     ~Tela();
     void stop();
     void init();

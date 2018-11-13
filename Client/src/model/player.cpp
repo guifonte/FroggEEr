@@ -24,7 +24,36 @@ float Player::getY() {
   return this->y;
 }
 
+int Player::getLevel() {
+  return this->level;
+}
+
+void Player::levelUp() {
+  this->level++;
+}
+
+
 void Player::resetPos(){
   this->x = this->startX;
   this->y = this->startY;
+}
+
+ListaDePlayers::ListaDePlayers() {
+  this->players = new std::vector<Player*>(0);
+}
+
+int ListaDePlayers::getNumOfPlayers(){
+  return (this->players)->size();
+}
+
+void ListaDePlayers::addPlayer(Player *l) {
+  (this->players)->push_back(l);
+}
+
+void ListaDePlayers::clearPlayers() {
+  (this->players)->clear();
+}
+
+std::vector<Player*> *ListaDePlayers::getPlayers() {
+  return (this->players);
 }

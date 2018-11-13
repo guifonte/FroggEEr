@@ -103,7 +103,7 @@ int main() {
   //DataContainer *data = rd->dump();
 
   //Tela *tela = new Tela(&(data->player), &(data->l), &(data->level) ,winX, winY, winX, winY);
-  Tela *tela = new Tela(player,l,&level,winX, winY, winX, winY);
+  Tela *tela = new Tela(players,l,&level,winX, winY, winX, winY);
   //tela->showStartFrog();
   tela->init();
   tela->update();
