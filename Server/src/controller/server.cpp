@@ -27,8 +27,7 @@ int Server::init(unsigned int port){
   return socket_fd;
 }
 
-int* Server::accept_connections(int socket_fd){
-  int connection_fd[MAX_CONEXOES];
+int* Server::accept_connections(int socket_fd, int *connection_fd){
   int conexao_usada[MAX_CONEXOES];
   struct sockaddr_in client;
   socklen_t client_size = (socklen_t)sizeof(client);

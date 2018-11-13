@@ -97,7 +97,7 @@ int main (){
   //int connection_fd = 0;
   int *connection_fd;
   
-  connection_fd = server->accept_connections(socket_fd);
+  server->accept_connections(socket_fd, connection_fd);
   
   // char key = '0';
   // std::thread serverthread(Server::run, &socket_fd, &key, &connection_fd);
@@ -108,7 +108,7 @@ int main (){
    *(key+i) = '0';
   }
 
-  std::thread serverthread(Server::run, &socket_fd, key, &connection_fd);
+  std::thread serverthread(Server::run, &socket_fd, key, connection_fd);
 
   //Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
   //tela->showStartFrog();
