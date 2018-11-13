@@ -43,10 +43,9 @@ uint64_t get_now_ms() {
   return duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count();
 }
 
-int main ()
-{
+int main (){
   srand(time(NULL));
-
+  int levelUpCount[MAX_CONEXOES];
   int winX = 15;
   int winY = 51;
 
@@ -78,6 +77,10 @@ int main ()
     // fix start position
     Player *player = new Player(laneStartX+2, laneY/2);
     lp->addPlayer(player);
+  }
+
+  for (int i=0; i<MAX_CONEXOES; i++) {
+    levelUpCount[i]=0;
   }
 
   RelevantData *rd;
@@ -215,24 +218,33 @@ int main ()
     //   nextLevel++;
     //   //soundManager->playLevelUpSound(t0);
     // }
-      
+    
     for (int i = 0; i < (*players).size(); i++) {
       if((*players)[i]->getX() <= (laneStartX-(l->getNumberOfLanes()))) {
-        (*players)[i]->levelUp();
+        if (levelUpCount[i]==0) {
+          (*players)[i]->levelUp();
+          levelUpCount[i]=1;
+        }
         //soundManager->playLevelUpSound(t0);
       }
     }
 
-      nextLevel++;
-
-      touched = f->hasTouched((*players)[i]);
-          // Verifica se tocou em algum bloco
-      if(touched == 1){
-        //soundManager->playKillSound(t0);
-        (*players)[i]->resetPos();
-        touched = 0; 
-      }
+    int flag=1;
+    for (int i=0; i<MAX_CONEXOES; i++) {
+      flag=levelUpCount[i]*flag;
     }
+    if (flag==1) {
+      nextLevel++;
+    }    
+
+    // touched = f->hasTouched((*players)[i]);
+    // // Verifica se tocou em algum bloco
+    // if(touched == 1){
+    //   //soundManager->playKillSound(t0);
+    //   (*players)[i]->resetPos();
+    //   touched = 0; 
+    //   }
+    // }
 
     /*printf("rel data!\n");
     rd = new RelevantData(*player, l, level);
@@ -245,15 +257,15 @@ int main ()
     //player["char"] = 'A';
     //root["nivel"] = this->data->level;
 
-    //printf("playerX!\n");
-    float x = player->getX();
-    //printf("%lf\n",x);
-    playerJson["x"] = x;
-
-
-    //printf("playerY!\n");
-    playerJson["y"] = player->getY();
-    //printf("lanes!\n");
+    for (int i = 0; i < (*players).size(); i++) {
+      playerJson["x"] = (*players)[i]->getX();
+      playerJson["y"] = (*players)[i]->getY();
+      root["player"][i] = playerJson;
+    }
+    
+    // playerJson["x"] = player->getX();
+    // playerJson["y"] = player->getY();
+    
     vector<Lane*> *lvec = l->getLanes();
     int numcount = (*lvec).size();
     for(int i = 0; i < numcount; i++) {
@@ -261,9 +273,10 @@ int main ()
         lanesJson[i]["pos"] = (*lvec)[i]->getPos();
         lanesJson[i]["content"] = (*lvec)[i]->getContent();
     }
+
     root["lanes"] = lanesJson;
-    root["player"] = playerJson;
     root["level"] = level;
+    
     //etc
 
     Json::FastWriter fast;
@@ -273,12 +286,16 @@ int main ()
     buffer.resize(bufferStr.length() + 1);
     std::copy(bufferStr.c_str(), bufferStr.c_str() + bufferStr.length() + 1, buffer.begin());
     printf("%lu\n",buffer.size());
-    if (send(connection_fd, &buffer[0], buffer.size(), MSG_NOSIGNAL) == -1) {
-      printf("Usuario desconectou!\n");
-    }
-    //printf("%s",bufferStr.c_str());
-    
 
+    for (int i = 0; i < MAX_CONEXOES; i++) {
+      if (send(connection_fd[i], &buffer[0], buffer.size(), MSG_NOSIGNAL) == -1) {
+        printf("Usuario desconectou!\n");
+      }
+    }
+    // if (send(connection_fd, &buffer[0], buffer.size(), MSG_NOSIGNAL) == -1) {
+    //   printf("Usuario desconectou!\n");
+    // }
+    //printf("%s",bufferStr.c_str());
 
     // Condicao de parada
     if ( (t1-T) > 1000000 ) break;
