@@ -34,6 +34,21 @@ int main() {
   struct sockaddr_in target;
   char serverIp[16];
   
+  char playerName[10];
+  char playerChar[2];
+  char playerInfo[12];
+
+  /*printf("Bem vindo ao FroggEEr!\n");
+  printf("Escreva o nome do seu jogador! (max 10 chars)\n");
+  scanf("%s", playerName);	
+  //printf("%s\n",playerName);
+  printf("Escreva o char para o seu avatar!\n");
+  scanf("%s", playerChar);	
+  //printf("%s\n",playerChar);
+  strcpy(playerInfo,playerChar);
+  strcat(playerInfo,playerName);
+  //printf("Infos: %s\n",playerInfo);*/
+
   printf("IP do servidor:\n");
   //scanf("%s", serverIp);	
   socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -49,6 +64,9 @@ int main() {
     return 0;
   }
   printf("Conectei ao servidor\n");
+
+  //Manda char e nome
+  //send(socket_fd, &playerInfo, 12, 0);
 
   int winX = 15;
   int winY = 51;

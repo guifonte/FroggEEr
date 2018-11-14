@@ -75,7 +75,7 @@ int main (){
 
   for (int i=0; i<MAX_CONEXOES; i++) {
     // fix start position
-    Player *player = new Player(laneStartX+2, laneY/2);
+    Player *player = new Player(laneStartX+2, int((1+i)*laneY/(MAX_CONEXOES+1)));
     lp->addPlayer(player);
   }
 
