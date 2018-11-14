@@ -34,6 +34,21 @@ int main() {
   struct sockaddr_in target;
   char serverIp[16];
   
+  char playerName[10];
+  char playerChar[2];
+  char playerInfo[12];
+
+  /*printf("Bem vindo ao FroggEEr!\n");
+  printf("Escreva o nome do seu jogador! (max 10 chars)\n");
+  scanf("%s", playerName);	
+  //printf("%s\n",playerName);
+  printf("Escreva o char para o seu avatar!\n");
+  scanf("%s", playerChar);	
+  //printf("%s\n",playerChar);
+  strcpy(playerInfo,playerChar);
+  strcat(playerInfo,playerName);
+  //printf("Infos: %s\n",playerInfo);*/
+
   printf("IP do servidor:\n");
   //scanf("%s", serverIp);	
   socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -49,6 +64,9 @@ int main() {
     return 0;
   }
   printf("Conectei ao servidor\n");
+
+  //Manda char e nome
+  //send(socket_fd, &playerInfo, 12, 0);
 
   int winX = 15;
   int winY = 51;
@@ -70,6 +88,7 @@ int main() {
   ListaDePlayers *p = new ListaDePlayers();
   ListaDeLanes *l = new ListaDeLanes();
   int level;
+  int aux_level; //utilizado para saber se mudou de level
   float x;
   float y;
   int countLanes;
@@ -95,6 +114,7 @@ int main() {
         l->clearLanes();
         p->clearPlayers();
         level = root["level"].asLargestInt();
+        aux_level = level;
         //playKill = root["playKill"].asLargestInt();
         //playLvlUp = root["playLvlUp"].asLargestInt();
 
@@ -182,6 +202,12 @@ int main() {
     t1 = get_now_ms();
     deltaT = t1-t0;
 
+    // Verifica se mudou o nível
+    if(aux_level != level) {
+      tela->clearLaneArea();
+      aux_level = level;
+    }
+
     // Atualiza tela
     tela->update();
 
@@ -217,7 +243,7 @@ int main() {
     }
     cPrev = c;
 
-    std::this_thread::sleep_for (std::chrono::milliseconds(50));
+    std::this_thread::sleep_for (std::chrono::milliseconds(10));
 
   }
   

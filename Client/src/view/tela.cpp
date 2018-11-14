@@ -7,8 +7,9 @@
 #define SAFEZONE_PAIR   1
 #define STREET_PAIR     2
 #define CAR_PAIR        3
-#define P_STREET_PAIR   4
-#define P_SAFEZONE_PAIR 5
+#define P_BORDER_PAIR   4
+#define P_STREET_PAIR   5
+#define P_SAFEZONE_PAIR 6
 
 Tela::Tela(ListaDePlayers *players, ListaDeLanes *lanes, int *level, int maxI, int maxJ, float maxX, float maxY) {
   this->playersAtuais = players;
@@ -46,8 +47,9 @@ void Tela::init() {
   init_pair(CAR_PAIR, COLOR_RED, COLOR_RED);
   init_pair(P_STREET_PAIR, COLOR_WHITE, COLOR_BLACK);
   init_pair(P_SAFEZONE_PAIR, COLOR_WHITE, COLOR_GREEN);
-
+  init_pair(P_BORDER_PAIR, COLOR_WHITE, COLOR_WHITE);
   //Desenha bordas da tela
+  attron(COLOR_PAIR(P_BORDER_PAIR));
   for(int i = 0; i < this->maxI+1; i++) {
     move(i,0);
     echochar('|');
@@ -62,12 +64,13 @@ void Tela::init() {
     move(this->maxI,i);
     echochar('-');
   }
+  attroff(COLOR_PAIR(P_BORDER_PAIR));
 }
 
 void Tela::clearLaneArea() {
   attron(COLOR_PAIR(STREET_PAIR));
   for(int i = 5; i < this->maxI-2; i++) {
-    for(int j = 1; j < this->maxJ; j++) {
+    for(int j = 1; j < this->maxJ+1; j++) {
       move(i,j);
       echochar(' ');
     }
@@ -100,21 +103,25 @@ void Tela::update() {
   
   // escreve título e nível
   move(1,2);
-  printw("FroggEEr  |  ");
-  move(1,14);
-  printw("          ");
+  printw("FroggEEr  ");
+  move(1,11);
+  attron(COLOR_PAIR(P_BORDER_PAIR));
+  echochar('|');
+  attroff(COLOR_PAIR(P_BORDER_PAIR));
+  //move(1,3);
+  //printw("          ");
   move(1,14);
   printw("Level: %d",*level);
 
   // Apaga lanes da tela
-  /*for(int i = 0; i < (*l).size(); i++) {
-      for(int j = 0; j<(*l)[i]->content.size(); j++) {
-        move((*l)[i]->getX(),j+1);
+  for(int i = 0; i < (*l).size(); i++) {
+      for(int j = 1; j<(*l)[i]->content.size()+3; j++) {
+        move((*l)[i]->getX(),j);
         echochar(' ');
       }
-  }*/
+  }
 
-  this->clearLaneArea();
+  //this->clearLaneArea();
 
   /* 
     Desenha lanes na tela.
@@ -150,6 +157,22 @@ void Tela::update() {
   }
   attroff(COLOR_PAIR(CAR_PAIR));
 
+  //Desenha safezones na tela
+
+  attron(COLOR_PAIR(SAFEZONE_PAIR));
+  for(int i = 1; i < this->maxJ+1; i++) {
+    move(this->maxI-1,i);
+    echochar(' ');
+    move(this->maxI-2,i);
+    echochar(' ');
+    move(this->maxI-3-(*l).size(),i);
+    echochar(' ');
+    move(this->maxI-4-(*l).size(),i);
+    echochar(' ');
+  }
+  attroff(COLOR_PAIR(SAFEZONE_PAIR));
+
+
   //------------------------------------------------------------------
   //-------------------------___________------------------------------
   //-------------------------| PLAYERS |------------------------------
@@ -169,10 +192,23 @@ void Tela::update() {
           (this->maxJ / this->maxY);
 
     //printf("I J old: %d %d\n",playerI,playerJ);
+    int safe = 0;
+    if((playerI == this->maxI-1)||(playerI == this->maxI-2)||(playerI == this->maxI-3-(*l).size())||(playerI == this->maxI-4-(*l).size())){
+      safe = 1;
+      attron(COLOR_PAIR(P_SAFEZONE_PAIR));
+    } else {
+      attron(COLOR_PAIR(P_STREET_PAIR));
+    }
 
     if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
       move(playerI, playerJ);   /* Move cursor to position */
       echochar(' ');  /* Prints character, advances a position */
+    }
+
+    if(safe == 1){
+      attroff(COLOR_PAIR(P_SAFEZONE_PAIR));
+    } else {
+      attroff(COLOR_PAIR(P_STREET_PAIR));
     }
 
     // Desenha player na tela
@@ -184,10 +220,22 @@ void Tela::update() {
           (this->maxJ / this->maxY);
 
     //printf("I J new: %d %d\n",playerI,playerJ);
+    safe = 0;
+    if((playerI == this->maxI-1)||(playerI == this->maxI-2)||(playerI == this->maxI-3-(*l).size())||(playerI == this->maxI-4-(*l).size())){
+      attron(COLOR_PAIR(P_SAFEZONE_PAIR));
+    } else {
+      attron(COLOR_PAIR(P_STREET_PAIR));
+    }
 
     if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
       move(playerI, playerJ);   /* Move cursor to position */
-      echochar('*');  /* Prints character, advances a position */
+      echochar('O');  /* Prints character, advances a position */
+    }
+
+    if(safe == 1){
+      attroff(COLOR_PAIR(P_SAFEZONE_PAIR));
+    } else {
+      attroff(COLOR_PAIR(P_STREET_PAIR));
     }
 
     // Atualiza player
