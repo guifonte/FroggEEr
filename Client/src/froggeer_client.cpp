@@ -50,14 +50,14 @@ int main() {
   //printf("Infos: %s\n",playerInfo);*/
 
   printf("IP do servidor:\n");
-  //scanf("%s", serverIp);	
+  scanf("%s", serverIp);	
   socket_fd = socket(AF_INET, SOCK_STREAM, 0);
   printf("Socket criado\n");
 
   target.sin_family = AF_INET;
   target.sin_port = htons(3001);
-  //inet_aton(serverIp, &(target.sin_addr));
-  inet_aton("127.0.0.1", &(target.sin_addr));
+
+  inet_aton(serverIp, &(target.sin_addr));
   printf("Tentando conectar\n");
   if (connect(socket_fd, (struct sockaddr*)&target, sizeof(target)) != 0) {
     printf("Problemas na conexao\n");

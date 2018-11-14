@@ -58,10 +58,10 @@ void Server::run(int *socket_fd, char *key, int *connection_fd){
   while (1) {
     for (int i=0; i<MAX_CONEXOES; i++) {
       msglen=recv(connection_fd[i], input_buffer, 2, 0);
-      printf("Msglen: %d User: %d\n", msglen, i);
+      //printf("Msglen: %d User: %d\n", msglen, i);
       if (msglen>0) {
         key[i] = input_buffer[0];
-        printf("Received char %c from user %d\n", key[i], i);
+        //printf("Received char %c from user %d\n", key[i], i);
       }
     }
   }
