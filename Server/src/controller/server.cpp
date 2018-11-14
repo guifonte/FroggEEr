@@ -75,8 +75,8 @@ void Server::run(int *socket_fd, char *key, int *connection_fd){
   printf("IP que enviou: %s\n", ip_client);*/
   while (1) {
     for (int i=0; i<MAX_CONEXOES; i++) {
-      recv(*(connection_fd+i), input_buffer, 10, 0);
-      *(key+i) = input_buffer[0];
+      recv(connection_fd[i], input_buffer, 10, 0);
+      key[i] = input_buffer[0];
     }
     
     //printf("%s\n", input_buffer);
