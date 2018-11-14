@@ -164,52 +164,30 @@ int main (){
     // Atualiza tela
     //tela->update();
 
-    // // Lê o teclado
-    // c = teclado->getchar();
-    // if (c != cPrev){ //evita que o usuário deixe o botão pressionado para andar mais rápido
-    //   if (c=='w') {
-    //     if(player->getX() > 3)
-    //       player->update(player->getX()-1,player->getY());
-    //   }
-    //   if (c=='a') {
-    //     if(player->getY() > 1)
-    //       player->update(player->getX(),player->getY()-1);
-    //   }
-    //   if (c=='s') {
-    //     if(player->getX() < laneStartX+2)
-    //       player->update(player->getX()+1,player->getY());
-    //   }
-    //   if (c=='d') {
-    //     if(player->getY() < laneY+2)
-    //       player->update(player->getX(),player->getY()+1);
-    //   }
-    //   if (c=='q') {
-    //     break;
-    //   }
-    // }
-    // cPrev = c;
+    for (int i=0; i<MAX_CONEXOES; i++) {
+      c2 = key[i];
+      if (c2=='w') {
+        if((*players)[i]->getX() > 3)
+          (*players)[i]->update((*players)[i]->getX()-1,(*players)[i]->getY());
+      }
+      if (c2=='a') {
+        if((*players)[i]->getY() > 1)
+          (*players)[i]->update((*players)[i]->getX(),(*players)[i]->getY()-1);
+      }
+      if (c2=='s') {
+        if((*players)[i]->getX() < laneStartX+2)
+          (*players)[i]->update((*players)[i]->getX()+1,(*players)[i]->getY());
+      }
+      if (c2=='d') {
+        if((*players)[i]->getY() < laneY+2)
+          (*players)[i]->update((*players)[i]->getX(),(*players)[i]->getY()+1);
+      }
+      if (c2=='q') {
+        break;
+      }
+      key[i] = '0';
+    }
 
-    // c2 = key;
-    // if (c2=='w') {
-    //   if(player->getX() > 3)
-    //     player->update(player->getX()-1,player->getY());
-    // }
-    // if (c2=='a') {
-    //   if(player->getY() > 1)
-    //     player->update(player->getX(),player->getY()-1);
-    // }
-    // if (c2=='s') {
-    //   if(player->getX() < laneStartX+2)
-    //     player->update(player->getX()+1,player->getY());
-    // }
-    // if (c2=='d') {
-    //   if(player->getY() < laneY+2)
-    //     player->update(player->getX(),player->getY()+1);
-    // }
-    // if (c2=='q') {
-    //   break;
-    // }
-    // key = '0';
 
    
     // // Verifica se atravessou as lanes
@@ -286,6 +264,8 @@ int main (){
     buffer.resize(bufferStr.length() + 1);
     std::copy(bufferStr.c_str(), bufferStr.c_str() + bufferStr.length() + 1, buffer.begin());
     printf("%lu\n",buffer.size());
+    printf("RECEBI:\n%s\n", bufferStr.c_str());
+
 
     for (int i = 0; i < MAX_CONEXOES; i++) {
       if (send(connection_fd[i], &buffer[0], buffer.size(), MSG_NOSIGNAL) == -1) {
