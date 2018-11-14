@@ -72,7 +72,7 @@ int main() {
   int winY = 51;
 
   char c,c2;//char clicado no teclado
-  char cPrev = 0;//char anterior clicado pelo teclado
+  char cPrev = '0';//char anterior clicado pelo teclado
   char key = '0';
 
   Teclado *teclado = new Teclado();

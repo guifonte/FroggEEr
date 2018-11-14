@@ -9,16 +9,14 @@ Teclado::Teclado() {
 Teclado::~Teclado() {
 }
 
-void threadfun (char *keybuffer, int *control)
-{
+void threadfun (char *keybuffer, int *control){
   char c;
   while ((*control) == 1) {
     c = getch();
     if (c!=ERR) (*keybuffer) = c;
-    else (*keybuffer) = 0;
+    else (*keybuffer) = '0';
     std::this_thread::sleep_for (std::chrono::milliseconds(10));
   }
-  return;
 }
 
 void Teclado::init() {

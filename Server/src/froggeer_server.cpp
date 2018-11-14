@@ -19,7 +19,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
 #include <string>
 #include <cstring>
 
@@ -68,7 +67,7 @@ int main (){
   int touched = 0;//indica se player tocou em algo
 
   char c,c2;//char clicado no teclado
-  char cPrev = 0;//char anterior clicado pelo teclado
+  char cPrev = '0';//char anterior clicado pelo teclado
 
   ListaDePlayers *lp = new ListaDePlayers();
   ListaDeLanes *l = new ListaDeLanes();
@@ -104,8 +103,10 @@ int main (){
    key[i] = '0';
   }
 
-  int socket_fd = server->init(3001);
-  server->accept_connections(socket_fd, connection_fd);
+  int socket_fd; 
+
+  server->init(&socket_fd, 3001);
+  server->accept_connections(&socket_fd, connection_fd);
 
   std::thread serverthread(Server::run, &socket_fd, key, connection_fd);
 
@@ -130,20 +131,6 @@ int main (){
     t0 = t1;
     t1 = get_now_ms();
     deltaT = t1-t0;
-
-    //verifica se muda de nível.
-    //Se sim, apaga as lanes anteriores e cria novas com o novo nível
-    //Move o player para posição inicial
-
-    if(nextLevel == 1) {
-      nextLevel = 0;
-      l->clearLanes();
-      //tela->clearLaneArea();
-      l->createLanes(maxNumLanes,laneY,laneStartX, level);
-      for(int i = 0; i < (*players).size(); i++) {
-        (*players)[i]->resetPos();
-      }
-    }
 
     // Atualiza modelo
     f->update(deltaT);
@@ -188,14 +175,7 @@ int main (){
     }
 
 
-   
-    // // Verifica se atravessou as lanes
-    // if(player->getX() <= (laneStartX-(l->getNumberOfLanes()))) {
-    //   level++;
-    //   nextLevel++;
-    //   //soundManager->playLevelUpSound(t0);
-    // }
-    
+    // Verifica se os players passaram de nivel
     for (int i = 0; i < (*players).size(); i++) {
       if((*players)[i]->getX() <= (laneStartX-(l->getNumberOfLanes()))) {
         if (levelUpCount[i]==0) {
@@ -211,23 +191,26 @@ int main (){
       flag=levelUpCount[i]*flag;
     }
     if (flag==1) {
+      level++;
+      for (int i=0; i<MAX_CONEXOES; i++) {
+        levelUpCount[i]=0;
+      }
       nextLevel++;
-    }    
+    }
 
-    // touched = f->hasTouched((*players)[i]);
-    // // Verifica se tocou em algum bloco
-    // if(touched == 1){
-    //   //soundManager->playKillSound(t0);
-    //   (*players)[i]->resetPos();
-    //   touched = 0; 
-    //   }
-    // }
+    //Verifica se muda de nível.
+    //Se sim, apaga as lanes anteriores e cria novas com o novo nível
+    //Move o player para posição inicial
+    if(nextLevel == 1) {
+      nextLevel = 0;
+      l->clearLanes();
+      //tela->clearLaneArea();
+      l->createLanes(maxNumLanes,laneY,laneStartX, level);
+      for(int i = 0; i < (*players).size(); i++) {
+        (*players)[i]->resetPos();
+      }
+    }
 
-    /*printf("rel data!\n");
-    rd = new RelevantData(*player, l, level);
-    printf("serialize!\n");
-    bufferStr = rd->serialize();
-    printf("bufclear!\n");*/
     Json::Value root;
     Json::Value playerJson;
     Json::Value lanesJson;
@@ -240,9 +223,6 @@ int main (){
       root["player"][i] = playerJson;
     }
     
-    // playerJson["x"] = player->getX();
-    // playerJson["y"] = player->getY();
-    
     vector<Lane*> *lvec = l->getLanes();
     int numcount = (*lvec).size();
     for(int i = 0; i < numcount; i++) {
@@ -254,7 +234,6 @@ int main (){
     root["lanes"] = lanesJson;
     root["level"] = level;
     
-    //etc
 
     Json::FastWriter fast;
     //Json::StyledWriter styled;
@@ -263,7 +242,7 @@ int main (){
     buffer.resize(bufferStr.length() + 1);
     std::copy(bufferStr.c_str(), bufferStr.c_str() + bufferStr.length() + 1, buffer.begin());
     printf("%lu\n",buffer.size());
-    printf("RECEBI:\n%s\n", bufferStr.c_str());
+    //printf("RECEBI:\n%s\n", bufferStr.c_str());
 
 
     for (int i = 0; i < MAX_CONEXOES; i++) {
