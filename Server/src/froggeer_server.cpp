@@ -166,20 +166,23 @@ int main (){
     // Atualiza tela
     //tela->update();
 
-    for (int i=0; i<MAX_CONEXOES; i++) {
+    for (int i=0; i<MAX_CONEXOES; i++) {    
       c2 = key[i];
-      if (c2=='w') {
-        if((*players)[i]->getX() > 3)
-          (*players)[i]->update((*players)[i]->getX()-1,(*players)[i]->getY());
+      if(levelUpCount[i]==0){
+        if (c2=='w') {
+          if((*players)[i]->getX() > 3)
+            (*players)[i]->update((*players)[i]->getX()-1,(*players)[i]->getY());
+        }
+        if (c2=='s') {
+          if((*players)[i]->getX() < laneStartX+2)
+            (*players)[i]->update((*players)[i]->getX()+1,(*players)[i]->getY());
+        }
       }
       if (c2=='a') {
         if((*players)[i]->getY() > 1)
           (*players)[i]->update((*players)[i]->getX(),(*players)[i]->getY()-1);
       }
-      if (c2=='s') {
-        if((*players)[i]->getX() < laneStartX+2)
-          (*players)[i]->update((*players)[i]->getX()+1,(*players)[i]->getY());
-      }
+
       if (c2=='d') {
         if((*players)[i]->getY() < laneY+2)
           (*players)[i]->update((*players)[i]->getX(),(*players)[i]->getY()+1);
