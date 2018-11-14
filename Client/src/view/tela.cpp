@@ -159,7 +159,18 @@ void Tela::update() {
 
   //Desenha safezones na tela
 
-
+  attron(COLOR_PAIR(P_SAFEZONE_PAIR));
+  for(int i = 1; i < this->maxJ; i++) {
+    
+    move(this->maxI-1,i);
+    echochar(' ');
+    
+    move(this->maxI-2,i);
+    echochar(' ');
+    
+  }
+  echochar(' ');
+  attroff(COLOR_PAIR(P_SAFEZONE_PAIR));
 
 
   //------------------------------------------------------------------
