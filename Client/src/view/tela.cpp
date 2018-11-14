@@ -70,7 +70,7 @@ void Tela::init() {
 void Tela::clearLaneArea() {
   attron(COLOR_PAIR(STREET_PAIR));
   for(int i = 5; i < this->maxI-2; i++) {
-    for(int j = 1; j < this->maxJ; j++) {
+    for(int j = 1; j < this->maxJ+1; j++) {
       move(i,j);
       echochar(' ');
     }
@@ -114,14 +114,14 @@ void Tela::update() {
   printw("Level: %d",*level);
 
   // Apaga lanes da tela
-  /*for(int i = 0; i < (*l).size(); i++) {
-      for(int j = 0; j<(*l)[i]->content.size(); j++) {
-        move((*l)[i]->getX(),j+1);
+  for(int i = 0; i < (*l).size(); i++) {
+      for(int j = 1; j<(*l)[i]->content.size()+3; j++) {
+        move((*l)[i]->getX(),j);
         echochar(' ');
       }
-  }*/
+  }
 
-  this->clearLaneArea();
+  //this->clearLaneArea();
 
   /* 
     Desenha lanes na tela.
@@ -159,17 +159,18 @@ void Tela::update() {
 
   //Desenha safezones na tela
 
-  attron(COLOR_PAIR(P_SAFEZONE_PAIR));
+  attron(COLOR_PAIR(SAFEZONE_PAIR));
   for(int i = 1; i < this->maxJ+1; i++) {
-    
     move(this->maxI-1,i);
     echochar(' ');
-    
     move(this->maxI-2,i);
     echochar(' ');
-    
+    move(this->maxI-3-(*l).size(),i);
+    echochar(' ');
+    move(this->maxI-4-(*l).size(),i);
+    echochar(' ');
   }
-  attroff(COLOR_PAIR(P_SAFEZONE_PAIR));
+  attroff(COLOR_PAIR(SAFEZONE_PAIR));
 
 
   //------------------------------------------------------------------
@@ -191,10 +192,23 @@ void Tela::update() {
           (this->maxJ / this->maxY);
 
     //printf("I J old: %d %d\n",playerI,playerJ);
+    int safe = 0;
+    if((playerI == this->maxI-1)||(playerI == this->maxI-2)||(playerI == this->maxI-3-(*l).size())||(playerI == this->maxI-4-(*l).size())){
+      safe = 1;
+      attron(COLOR_PAIR(P_SAFEZONE_PAIR));
+    } else {
+      attron(COLOR_PAIR(P_STREET_PAIR));
+    }
 
     if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
       move(playerI, playerJ);   /* Move cursor to position */
       echochar(' ');  /* Prints character, advances a position */
+    }
+
+    if(safe == 1){
+      attroff(COLOR_PAIR(P_SAFEZONE_PAIR));
+    } else {
+      attroff(COLOR_PAIR(P_STREET_PAIR));
     }
 
     // Desenha player na tela
@@ -206,10 +220,22 @@ void Tela::update() {
           (this->maxJ / this->maxY);
 
     //printf("I J new: %d %d\n",playerI,playerJ);
+    safe = 0;
+    if((playerI == this->maxI-1)||(playerI == this->maxI-2)||(playerI == this->maxI-3-(*l).size())||(playerI == this->maxI-4-(*l).size())){
+      attron(COLOR_PAIR(P_SAFEZONE_PAIR));
+    } else {
+      attron(COLOR_PAIR(P_STREET_PAIR));
+    }
 
     if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
       move(playerI, playerJ);   /* Move cursor to position */
-      echochar('*');  /* Prints character, advances a position */
+      echochar('O');  /* Prints character, advances a position */
+    }
+
+    if(safe == 1){
+      attroff(COLOR_PAIR(P_SAFEZONE_PAIR));
+    } else {
+      attroff(COLOR_PAIR(P_STREET_PAIR));
     }
 
     // Atualiza player

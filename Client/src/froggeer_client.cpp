@@ -70,6 +70,7 @@ int main() {
   ListaDePlayers *p = new ListaDePlayers();
   ListaDeLanes *l = new ListaDeLanes();
   int level;
+  int aux_level; //utilizado para saber se mudou de level
   float x;
   float y;
   int countLanes;
@@ -95,6 +96,7 @@ int main() {
         l->clearLanes();
         p->clearPlayers();
         level = root["level"].asLargestInt();
+        aux_level = level;
         //playKill = root["playKill"].asLargestInt();
         //playLvlUp = root["playLvlUp"].asLargestInt();
 
@@ -181,6 +183,12 @@ int main() {
     t0 = t1;
     t1 = get_now_ms();
     deltaT = t1-t0;
+
+    // Verifica se mudou o nível
+    if(aux_level != level) {
+      tela->clearLaneArea();
+      aux_level = level;
+    }
 
     // Atualiza tela
     tela->update();
