@@ -95,8 +95,8 @@ int main() {
         l->clearLanes();
         p->clearPlayers();
         level = root["level"].asLargestInt();
-        playKill = root["playKill"].asLargestInt();
-        playLvlUp = root["playLvlUp"].asLargestInt();
+        //playKill = root["playKill"].asLargestInt();
+        //playLvlUp = root["playLvlUp"].asLargestInt();
 
         countPlayers = root["players"].size();
         for(int i = 0; i < countPlayers; i++){
@@ -117,6 +117,7 @@ int main() {
       }
     } else {
       printf("msg_len =0\n");
+      std::this_thread::sleep_for (std::chrono::milliseconds(100));
     }
   }
 

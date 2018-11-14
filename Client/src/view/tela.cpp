@@ -4,6 +4,12 @@
 
 #include <ncurses.h>
 
+#define SAFEZONE_PAIR   1
+#define STREET_PAIR     2
+#define CAR_PAIR        3
+#define P_STREET_PAIR   4
+#define P_SAFEZONE_PAIR 5
+
 Tela::Tela(ListaDePlayers *players, ListaDeLanes *lanes, int *level, int maxI, int maxJ, float maxX, float maxY) {
   this->playersAtuais = players;
   this->lanes = lanes;
@@ -28,6 +34,14 @@ void Tela::init() {
   curs_set(0);           /* Do not display cursor */
   noecho();              /* Do not output char to screen */
 
+  /* initialize colors */
+
+  start_color();
+  init_pair(SAFEZONE_PAIR, COLOR_WHITE, COLOR_GREEN);
+  init_pair(STREET_PAIR, COLOR_WHITE, COLOR_BLACK);
+  init_pair(CAR_PAIR, COLOR_RED, COLOR_RED);
+  init_pair(P_STREET_PAIR, COLOR_WHITE, COLOR_BLACK);
+  init_pair(P_SAFEZONE_PAIR, COLOR_WHITE, COLOR_GREEN);
 
   //Desenha bordas da tela
   for(int i = 0; i < this->maxI+1; i++) {
@@ -47,12 +61,14 @@ void Tela::init() {
 }
 
 void Tela::clearLaneArea() {
+  attron(COLOR_PAIR(STREET_PAIR));
   for(int i = 5; i < this->maxI-2; i++) {
     for(int j = 1; j < this->maxJ; j++) {
       move(i,j);
       echochar(' ');
     }
   }
+  attroff(COLOR_PAIR(STREET_PAIR));
 }
 
 void Tela::update() {
@@ -87,12 +103,14 @@ void Tela::update() {
   printw("Level: %d",*level);
 
   // Apaga lanes da tela
-  for(int i = 0; i < (*l).size(); i++) {
+  /*for(int i = 0; i < (*l).size(); i++) {
       for(int j = 0; j<(*l)[i]->content.size(); j++) {
         move((*l)[i]->getX(),j+1);
         echochar(' ');
       }
-  }
+  }*/
+
+  this->clearLaneArea();
 
   /* 
     Desenha lanes na tela.
@@ -101,6 +119,7 @@ void Tela::update() {
     na parte inicial da tela, a partir do getPos().
     Ele é quem é atualizado a partir da velocidade em física::update
   */
+  attron(COLOR_PAIR(CAR_PAIR));
   for(int i = 0; i < (*l).size(); i++) {
     laneStartPos = (*l)[i]->getPos();
     laneDrawPos = laneStartPos;
@@ -117,11 +136,15 @@ void Tela::update() {
       } else {
         laneDrawPos++;
       }
-      
+
       move((*l)[i]->getX(),laneDrawPos +1);
-      echochar((*l)[i]->content[j]);
+      
+      if((*l)[i]->content[j]=='>'){
+        echochar((*l)[i]->content[j]);
+      }   
     }
   }
+  attroff(COLOR_PAIR(CAR_PAIR));
 
   //------------------------------------------------------------------
   //-------------------------___________------------------------------
@@ -197,7 +220,7 @@ void Tela::gameOver() {
     c = fgetc(fptr); 
   } 
   printf("\n");
-  fclose(fptr);
+  //fclose(fptr);
 }
 
 void Tela::stop() {
@@ -237,7 +260,7 @@ void Tela::showStartFrog(){
     } 
     
     printf("\n");
-    fclose(fptr);
+    //fclose(fptr);
     getchar();
 }
 
@@ -266,5 +289,5 @@ void Tela::showSadFrog() {
     // } 
     
     printf("\n");
-    fclose(fptr);
+    //fclose(fptr);
 }
