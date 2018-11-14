@@ -229,7 +229,7 @@ void Tela::update() {
 
     if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
       move(playerI, playerJ);   /* Move cursor to position */
-      echochar('O');  /* Prints character, advances a position */
+      echochar((*p)[i]->getAvatar());  /* Prints character, advances a position */
     }
 
     if(safe == 1){

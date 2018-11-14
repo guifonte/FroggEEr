@@ -103,19 +103,33 @@ int main (){
    key[i] = '0';
   }
 
+  string playerinfo[MAX_CONEXOES];
+
   int socket_fd; 
-
+  int info = 1;
   server->init(&socket_fd, 3001);
+
+  std::thread serverthread(Server::run, &socket_fd, key, connection_fd, &info, playerinfo);
   server->accept_connections(&socket_fd, connection_fd);
+  std::this_thread::sleep_for (std::chrono::milliseconds(2000));
+  
+  std::vector<Player *> *tempP = lp->getPlayers();
 
-  std::thread serverthread(Server::run, &socket_fd, key, connection_fd);
+  for (int i=0; i<MAX_CONEXOES; i++) {
+    printf("%s\n",playerinfo[i].c_str());
+    (*tempP)[i]->setAvatar(playerinfo[i].at(0));
+    playerinfo[i].erase(0,1);
+    (*tempP)[i]->setName(playerinfo[i]);
+  }
 
+  info = 0;
   //Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
   //tela->showStartFrog();
   //tela->init();
 
   //Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
-
+  int playLvlUp = 0;
+  int playKill = 0;
 
   uint64_t t0;
   uint64_t t1;
@@ -136,12 +150,14 @@ int main (){
     f->update(deltaT);
 
     touched = 0;
-
+    playKill = 0;
+    playLvlUp = 0;
     //printf("updated\n");
     for (int i = 0; i < (*players).size(); i++) {
       touched = f->hasTouched((*players)[i]);
           // Verifica se tocou em algum bloco
       if(touched == 1){
+        playKill = 1;
         //soundManager->playKillSound(t0);
         (*players)[i]->resetPos();
         touched = 0; 
@@ -150,20 +166,23 @@ int main (){
     // Atualiza tela
     //tela->update();
 
-    for (int i=0; i<MAX_CONEXOES; i++) {
+    for (int i=0; i<MAX_CONEXOES; i++) {    
       c2 = key[i];
-      if (c2=='w') {
-        if((*players)[i]->getX() > 3)
-          (*players)[i]->update((*players)[i]->getX()-1,(*players)[i]->getY());
+      if(levelUpCount[i]==0){
+        if (c2=='w') {
+          if((*players)[i]->getX() > 3)
+            (*players)[i]->update((*players)[i]->getX()-1,(*players)[i]->getY());
+        }
+        if (c2=='s') {
+          if((*players)[i]->getX() < laneStartX+2)
+            (*players)[i]->update((*players)[i]->getX()+1,(*players)[i]->getY());
+        }
       }
       if (c2=='a') {
         if((*players)[i]->getY() > 1)
           (*players)[i]->update((*players)[i]->getX(),(*players)[i]->getY()-1);
       }
-      if (c2=='s') {
-        if((*players)[i]->getX() < laneStartX+2)
-          (*players)[i]->update((*players)[i]->getX()+1,(*players)[i]->getY());
-      }
+
       if (c2=='d') {
         if((*players)[i]->getY() < laneY+2)
           (*players)[i]->update((*players)[i]->getX(),(*players)[i]->getY()+1);
@@ -195,6 +214,7 @@ int main (){
       for (int i=0; i<MAX_CONEXOES; i++) {
         levelUpCount[i]=0;
       }
+      playLvlUp = 1;
       nextLevel++;
     }
 
@@ -220,6 +240,8 @@ int main (){
     for (int i = 0; i < (*players).size(); i++) {
       playerJson["x"] = (*players)[i]->getX();
       playerJson["y"] = (*players)[i]->getY();
+      playerJson["avatar"] = (*players)[i]->getAvatar();
+      playerJson["name"] = (*players)[i]->getName();
       root["player"][i] = playerJson;
     }
     
@@ -233,7 +255,8 @@ int main (){
 
     root["lanes"] = lanesJson;
     root["level"] = level;
-    
+    root["playKill"] = playKill;
+    root["playLvlUp"] = playLvlUp;
 
     Json::FastWriter fast;
     //Json::StyledWriter styled;
@@ -241,7 +264,7 @@ int main (){
     buffer.clear();
     buffer.resize(bufferStr.length() + 1);
     std::copy(bufferStr.c_str(), bufferStr.c_str() + bufferStr.length() + 1, buffer.begin());
-    printf("%lu\n",buffer.size());
+    //printf("%lu\n",buffer.size());
     //printf("RECEBI:\n%s\n", bufferStr.c_str());
 
 

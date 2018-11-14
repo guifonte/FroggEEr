@@ -1,5 +1,8 @@
 #include "../../inc/model/player.hpp"
 
+#include <string>
+#include <cstring>
+
 Player::Player() {
   
 }
@@ -9,6 +12,7 @@ Player::Player(float x, float y) {
   this->startY = y;
   this->x = x;
   this->y = y;
+  this->avatar = '0';
 }
 
 void Player::update(float newX, float newY) {
@@ -32,15 +36,33 @@ void Player::levelUp() {
   this->level++;
 }
 
-
 void Player::resetPos(){
   this->x = this->startX;
   this->y = this->startY;
 }
 
+char Player::getAvatar() {
+  return this->avatar;
+}
+
+string Player::getName() {
+  return this->name;
+}
+
+void Player::setAvatar(char avatar){
+  this->avatar = avatar;
+}
+
+void Player::setName(string name){
+  this->name = name;
+}
+
 ListaDePlayers::ListaDePlayers() {
   this->players = new std::vector<Player*>(0);
-  this->numberOfplayers = 0;
+}
+
+int ListaDePlayers::getNumOfPlayers(){
+  return (this->players)->size();
 }
 
 void ListaDePlayers::addPlayer(Player *l) {
@@ -54,3 +76,4 @@ void ListaDePlayers::clearPlayers() {
 std::vector<Player*> *ListaDePlayers::getPlayers() {
   return (this->players);
 }
+

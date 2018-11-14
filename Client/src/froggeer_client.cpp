@@ -38,7 +38,9 @@ int main() {
   char playerChar[2];
   char playerInfo[12];
 
-  /*printf("Bem vindo ao FroggEEr!\n");
+  freopen("/dev/null", "w", stderr);
+
+  printf("Bem vindo ao FroggEEr!\n");
   printf("Escreva o nome do seu jogador! (max 10 chars)\n");
   scanf("%s", playerName);	
   //printf("%s\n",playerName);
@@ -47,7 +49,7 @@ int main() {
   //printf("%s\n",playerChar);
   strcpy(playerInfo,playerChar);
   strcat(playerInfo,playerName);
-  //printf("Infos: %s\n",playerInfo);*/
+  //printf("Infos: %s\n",playerInfo);
 
   printf("IP do servidor:\n");
   scanf("%s", serverIp);	
@@ -64,9 +66,9 @@ int main() {
     return 0;
   }
   printf("Conectei ao servidor\n");
-
+  printf("Esperando os outros players entrarem para jogar");
   //Manda char e nome
-  //send(socket_fd, &playerInfo, 12, 0);
+  send(socket_fd, &playerInfo, 12, 0);
 
   int winX = 15;
   int winY = 51;
@@ -97,14 +99,15 @@ int main() {
   float lanePos;
   string content;
 
-  //Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
+  Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
   int playKill = 0;
   int playLvlUp = 0;
 
+  
   while(msg_len <= 0){
     msg_len = recv(socket_fd, buffer, 2048, MSG_DONTWAIT);
     if (msg_len > 0) {
-      printf("[%d] RECEBI:\n%s", msg_len, buffer);
+      //printf("[%d] RECEBI:\n%s", msg_len, buffer);
       Json::Value root;
       Json::Reader reader;
       bool b = reader.parse(buffer, root);
@@ -115,14 +118,16 @@ int main() {
         p->clearPlayers();
         level = root["level"].asLargestInt();
         aux_level = level;
-        //playKill = root["playKill"].asLargestInt();
-        //playLvlUp = root["playLvlUp"].asLargestInt();
+        playKill = root["playKill"].asLargestInt();
+        playLvlUp = root["playLvlUp"].asLargestInt();
 
         countPlayers = root["player"].size();
         for(int i = 0; i < countPlayers; i++){
           x = root["player"][i]["x"].asFloat();
           y = root["player"][i]["y"].asFloat();
           Player *tempPlayer = new Player(x,y);
+          tempPlayer->setAvatar(char(root["player"][i]["avatar"].asLargestInt()));
+          tempPlayer->setName(root["player"][i]["name"].asString());
           p->addPlayer(tempPlayer);
         }
         
@@ -136,7 +141,7 @@ int main() {
         }
       }
     } else {
-      printf("msg_len =0\n");
+      //printf("msg_len =0\n");
       std::this_thread::sleep_for (std::chrono::milliseconds(100));
     }
   }
@@ -174,12 +179,16 @@ int main() {
         l->clearLanes();
         p->clearPlayers();
         level = root["level"].asLargestInt();
+        playKill = root["playKill"].asLargestInt();
+        playLvlUp = root["playLvlUp"].asLargestInt();
 
         countPlayers = root["player"].size();
         for(int i = 0; i < countPlayers; i++){
           x = root["player"][i]["x"].asFloat();
           y = root["player"][i]["y"].asFloat();
           Player *tempPlayer = new Player(x,y);
+          tempPlayer->setAvatar(char(root["player"][i]["avatar"].asLargestInt()));
+          tempPlayer->setName(root["player"][i]["name"].asString());
           p->addPlayer(tempPlayer);
         }
         

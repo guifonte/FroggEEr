@@ -7,6 +7,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include<string>
+#include<cstring>
+
+using namespace std;
+
 Server::Server() {
 
 }
@@ -49,19 +54,31 @@ void Server::accept_connections(int *socket_fd, int *connection_fd){
   }  
 }
 
-void Server::run(int *socket_fd, char *key, int *connection_fd){
+void Server::run(int *socket_fd, char *key, int *connection_fd, int *info, std::string *player_info){
   struct sockaddr_in client;
   socklen_t client_size = (socklen_t)sizeof(client);
   char input_buffer[2];
+  char info_buffer[12];
   int msglen=0;
 
   while (1) {
-    for (int i=0; i<MAX_CONEXOES; i++) {
-      msglen=recv(connection_fd[i], input_buffer, 2, 0);
-      //printf("Msglen: %d User: %d\n", msglen, i);
-      if (msglen>0) {
-        key[i] = input_buffer[0];
-        //printf("Received char %c from user %d\n", key[i], i);
+    if(*info == 1){
+      for (int i=0; i<MAX_CONEXOES; i++) {
+        msglen=recv(connection_fd[i], info_buffer, 12, 0);
+        //printf("Msglen: %d User: %d\n", msglen, i);
+        if (msglen>0) {
+          player_info[i].append(info_buffer);
+          printf("Received info %s from user %d\n", player_info[i].c_str(), i);
+        }
+      }
+    } else {
+      for (int i=0; i<MAX_CONEXOES; i++) {
+        msglen=recv(connection_fd[i], input_buffer, 2, 0);
+        //printf("Msglen: %d User: %d\n", msglen, i);
+        if (msglen>0) {
+          key[i] = input_buffer[0];
+          printf("Received char %c from user %d\n", key[i], i);
+        }
       }
     }
   }
