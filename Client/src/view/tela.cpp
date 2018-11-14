@@ -7,8 +7,9 @@
 #define SAFEZONE_PAIR   1
 #define STREET_PAIR     2
 #define CAR_PAIR        3
-#define P_STREET_PAIR   4
-#define P_SAFEZONE_PAIR 5
+#define P_BORDER_PAIR   4
+#define P_STREET_PAIR   5
+#define P_SAFEZONE_PAIR 6
 
 Tela::Tela(ListaDePlayers *players, ListaDeLanes *lanes, int *level, int maxI, int maxJ, float maxX, float maxY) {
   this->playersAtuais = players;
@@ -46,8 +47,9 @@ void Tela::init() {
   init_pair(CAR_PAIR, COLOR_RED, COLOR_RED);
   init_pair(P_STREET_PAIR, COLOR_WHITE, COLOR_BLACK);
   init_pair(P_SAFEZONE_PAIR, COLOR_WHITE, COLOR_GREEN);
-
+  init_pair(P_BORDER_PAIR, COLOR_WHITE, COLOR_WHITE);
   //Desenha bordas da tela
+  attron(COLOR_PAIR(P_BORDER_PAIR));
   for(int i = 0; i < this->maxI+1; i++) {
     move(i,0);
     echochar('|');
@@ -62,6 +64,7 @@ void Tela::init() {
     move(this->maxI,i);
     echochar('-');
   }
+  attroff(COLOR_PAIR(P_BORDER_PAIR));
 }
 
 void Tela::clearLaneArea() {
@@ -100,9 +103,13 @@ void Tela::update() {
   
   // escreve título e nível
   move(1,2);
-  printw("FroggEEr  |  ");
-  move(1,14);
-  printw("          ");
+  printw("FroggEEr  ");
+  move(1,11);
+  attron(COLOR_PAIR(P_BORDER_PAIR));
+  echochar('|');
+  attroff(COLOR_PAIR(P_BORDER_PAIR));
+  //move(1,3);
+  //printw("          ");
   move(1,14);
   printw("Level: %d",*level);
 
@@ -149,6 +156,11 @@ void Tela::update() {
     }
   }
   attroff(COLOR_PAIR(CAR_PAIR));
+
+  //Desenha safezones na tela
+
+
+
 
   //------------------------------------------------------------------
   //-------------------------___________------------------------------
