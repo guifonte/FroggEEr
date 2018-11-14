@@ -19,7 +19,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
 #include <string>
 #include <cstring>
 
@@ -68,7 +67,7 @@ int main (){
   int touched = 0;//indica se player tocou em algo
 
   char c,c2;//char clicado no teclado
-  char cPrev = 0;//char anterior clicado pelo teclado
+  char cPrev = '0';//char anterior clicado pelo teclado
 
   ListaDePlayers *lp = new ListaDePlayers();
   ListaDeLanes *l = new ListaDeLanes();
@@ -104,8 +103,10 @@ int main (){
    key[i] = '0';
   }
 
-  int socket_fd = server->init(3001);
-  server->accept_connections(socket_fd, connection_fd);
+  int socket_fd; 
+
+  server->init(&socket_fd, 3001);
+  server->accept_connections(&socket_fd, connection_fd);
 
   std::thread serverthread(Server::run, &socket_fd, key, connection_fd);
 
@@ -263,7 +264,7 @@ int main (){
     buffer.resize(bufferStr.length() + 1);
     std::copy(bufferStr.c_str(), bufferStr.c_str() + bufferStr.length() + 1, buffer.begin());
     printf("%lu\n",buffer.size());
-    printf("RECEBI:\n%s\n", bufferStr.c_str());
+    //printf("RECEBI:\n%s\n", bufferStr.c_str());
 
 
     for (int i = 0; i < MAX_CONEXOES; i++) {
