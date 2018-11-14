@@ -27,12 +27,12 @@ int Server::init(unsigned int port){
   return socket_fd;
 }
 
-int* Server::accept_connections(int socket_fd, int *connection_fd){
+void Server::accept_connections(int socket_fd, int *connection_fd){
   int conexao_usada[MAX_CONEXOES];
   struct sockaddr_in client;
   socklen_t client_size = (socklen_t)sizeof(client);
   int conn_fd;
-  int user_id;
+  int user_flag=0;
   int new_connection_fd;
 
   listen(socket_fd, 2);
@@ -47,16 +47,18 @@ int* Server::accept_connections(int socket_fd, int *connection_fd){
     for (i=0; i<MAX_CONEXOES; i++) {
       if (conexao_usada[i] == 0) {
         conexao_usada[i] = 1;
-        connection_fd[i] = conn_fd;
+        connection_fd[i] = conn_fd;      
+        user_flag=1;
       }
     }
-    if (user_id > 0) {
+    if (user_flag==1) {
       printf("Novo usuario chegou!\n");
+      user_flag=0;
     } else {
       printf("Sem tentativa de conexão!\n");
     }
   }
-  return connection_fd;
+//  return connection_fd;
 }
 
 void Server::run(int *socket_fd, char *key, int *connection_fd){

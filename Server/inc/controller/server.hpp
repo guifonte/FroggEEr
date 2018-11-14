@@ -6,7 +6,7 @@ class Server {
   public:
     Server();
     int init(unsigned int port);
-    int * accept_connections(int socket_fd, int *connection_fd);
+    static void accept_connections(int socket_fd, int *connection_fd);
     static void run(int *socket_fd, char *key, int *connection_fd);
 };
 
