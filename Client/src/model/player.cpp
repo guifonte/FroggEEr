@@ -41,12 +41,20 @@ void Player::resetPos(){
   this->y = this->startY;
 }
 
+char Player::getAvatar() {
+  return this->avatar;
+}
+
+string Player::getName() {
+  return this->name;
+}
+
 void Player::setAvatar(char avatar){
   this->avatar = avatar;
 }
 
-void Player::setName(char name[]){
-  strcpy(this->name,name);
+void Player::setName(string name){
+  this->name = name;
 }
 
 ListaDePlayers::ListaDePlayers() {

@@ -2,6 +2,8 @@
 #define PLAYER_HPP
 using namespace std;
 #include <vector>
+#include <string>
+#include <cstring>
 
 class Player {
   private:
@@ -11,7 +13,7 @@ class Player {
   float y;
   int level;
   char avatar;
-  char name[10];
+  string name;
 
   public:
   Player();
@@ -22,8 +24,10 @@ class Player {
   float getY();
   int getLevel();
   void levelUp();
+  char getAvatar();
+  string getName();
   void setAvatar(char avatar);
-  void setName(char name[]);
+  void setName(string name);
 };
 
 class ListaDePlayers {

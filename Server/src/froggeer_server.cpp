@@ -103,13 +103,26 @@ int main (){
    key[i] = '0';
   }
 
+  string playerinfo[MAX_CONEXOES];
+
   int socket_fd; 
-
+  int info = 1;
   server->init(&socket_fd, 3001);
+
+  std::thread serverthread(Server::run, &socket_fd, key, connection_fd, &info, playerinfo);
   server->accept_connections(&socket_fd, connection_fd);
+  std::this_thread::sleep_for (std::chrono::milliseconds(2000));
+  
+  std::vector<Player *> *tempP = lp->getPlayers();
 
-  std::thread serverthread(Server::run, &socket_fd, key, connection_fd);
+  for (int i=0; i<MAX_CONEXOES; i++) {
+    printf("%s\n",playerinfo[i].c_str());
+    (*tempP)[i]->setAvatar(playerinfo[i].at(0));
+    playerinfo[i].erase(0,1);
+    (*tempP)[i]->setName(playerinfo[i]);
+  }
 
+  info = 0;
   //Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
   //tela->showStartFrog();
   //tela->init();
@@ -220,6 +233,8 @@ int main (){
     for (int i = 0; i < (*players).size(); i++) {
       playerJson["x"] = (*players)[i]->getX();
       playerJson["y"] = (*players)[i]->getY();
+      playerJson["avatar"] = (*players)[i]->getAvatar();
+      playerJson["name"] = (*players)[i]->getName();
       root["player"][i] = playerJson;
     }
     
