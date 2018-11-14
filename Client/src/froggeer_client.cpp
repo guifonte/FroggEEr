@@ -59,12 +59,13 @@ int main() {
   //char *bufferchar = new char[buffer.length()+1];
 
   //std::vector<Lane*> *vecLanes;
-  Player *player = new Player();
+  ListaDePlayers *p = new ListaDePlayers();
   ListaDeLanes *l = new ListaDeLanes();
   int level;
   float x;
   float y;
   int countLanes;
+  int countPlayers;
   int laneX;
   float lanePos;
   string content;
@@ -81,10 +82,17 @@ int main() {
         //cout << "Error: " << reader.getFormattedErrorMessages();
       else {
         l->clearLanes();
-        x = root["player"]["x"].asLargestInt();
-        y = root["player"]["y"].asLargestInt();
+        p->clearPlayers();
         level = root["level"].asLargestInt();
-        player->update(x,y);
+
+        countPlayers = root["players"].size();
+        for(int i = 0; i < countPlayers; i++){
+          x = root["players"][i]["x"].asFloat();
+          y = root["players"][i]["y"].asFloat();
+          Player *tempPlayer = new Player(x,y);
+          p->addPlayer(tempPlayer);
+        }
+        
         countLanes = root["lanes"].size();
         for(int i = 0; i < countLanes; i++){
           laneX = root["lanes"][i]["x"].asLargestInt();
@@ -103,7 +111,7 @@ int main() {
   //DataContainer *data = rd->dump();
 
   //Tela *tela = new Tela(&(data->player), &(data->l), &(data->level) ,winX, winY, winX, winY);
-  Tela *tela = new Tela(players,l,&level,winX, winY, winX, winY);
+  Tela *tela = new Tela(p,l,&level,winX, winY, winX, winY);
   //tela->showStartFrog();
   tela->init();
   tela->update();
@@ -121,10 +129,17 @@ int main() {
         //cout << "Error: " << reader.getFormattedErrorMessages();
       else {
         l->clearLanes();
-        x = root["player"]["x"].asLargestInt();
-        y = root["player"]["y"].asLargestInt();
+        p->clearPlayers();
         level = root["level"].asLargestInt();
-        player->update(x,y);
+
+        countPlayers = root["players"].size();
+        for(int i = 0; i < countPlayers; i++){
+          x = root["players"][i]["x"].asFloat();
+          y = root["players"][i]["y"].asFloat();
+          Player *tempPlayer = new Player(x,y);
+          p->addPlayer(tempPlayer);
+        }
+        
         countLanes = root["lanes"].size();
         for(int i = 0; i < countLanes; i++){
           laneX = root["lanes"][i]["x"].asLargestInt();
