@@ -78,7 +78,7 @@ int main() {
   float lanePos;
   string content;
 
-  Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
+  //Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
   int playKill = 0;
   int playLvlUp = 0;
 
@@ -95,8 +95,8 @@ int main() {
         l->clearLanes();
         p->clearPlayers();
         level = root["level"].asLargestInt();
-        playKill = root["playKill"].asLargestInt();
-        playLvlUp = root["playLvlUp"].asLargestInt();
+        //playKill = root["playKill"].asLargestInt();
+        //playLvlUp = root["playLvlUp"].asLargestInt();
 
         countPlayers = root["players"].size();
         for(int i = 0; i < countPlayers; i++){
@@ -185,11 +185,11 @@ int main() {
 
         // // Verifica se tocou em algum bloco
     if(playKill == 1){
-      soundManager->playKillSound(t0);
+      //soundManager->playKillSound(t0);
       playKill = 0; 
     }
     if(playLvlUp == 1){
-      soundManager->playLevelUpSound(t0);
+      //soundManager->playLevelUpSound(t0);
       playLvlUp = 0;
     }
     
