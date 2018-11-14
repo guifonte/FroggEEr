@@ -10,6 +10,8 @@ class Player {
   float x;
   float y;
   int level;
+  char avatar;
+  char name[10];
 
   public:
   Player();
@@ -20,6 +22,8 @@ class Player {
   float getY();
   int getLevel();
   void levelUp();
+  void setAvatar(char avatar);
+  void setName(char name[]);
 };
 
 class ListaDePlayers {
