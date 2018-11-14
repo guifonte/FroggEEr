@@ -38,6 +38,8 @@ int main() {
   char playerChar[2];
   char playerInfo[12];
 
+  freopen("/dev/null", "w", stderr);
+
   printf("Bem vindo ao FroggEEr!\n");
   printf("Escreva o nome do seu jogador! (max 10 chars)\n");
   scanf("%s", playerName);	
@@ -50,7 +52,7 @@ int main() {
   //printf("Infos: %s\n",playerInfo);
 
   printf("IP do servidor:\n");
-  //scanf("%s", serverIp);	
+  scanf("%s", serverIp);	
   socket_fd = socket(AF_INET, SOCK_STREAM, 0);
   printf("Socket criado\n");
 
@@ -64,7 +66,7 @@ int main() {
     return 0;
   }
   printf("Conectei ao servidor\n");
-
+  printf("Esperando os outros players entrarem para jogar");
   //Manda char e nome
   send(socket_fd, &playerInfo, 12, 0);
 
@@ -101,7 +103,7 @@ int main() {
   int playKill = 0;
   int playLvlUp = 0;
 
-  printf("Esperando os outros players entrarem para jogar")
+  
   while(msg_len <= 0){
     msg_len = recv(socket_fd, buffer, 2048, MSG_DONTWAIT);
     if (msg_len > 0) {
@@ -116,8 +118,8 @@ int main() {
         p->clearPlayers();
         level = root["level"].asLargestInt();
         aux_level = level;
-        //playKill = root["playKill"].asLargestInt();
-        //playLvlUp = root["playLvlUp"].asLargestInt();
+        playKill = root["playKill"].asLargestInt();
+        playLvlUp = root["playLvlUp"].asLargestInt();
 
         countPlayers = root["player"].size();
         for(int i = 0; i < countPlayers; i++){
@@ -177,6 +179,8 @@ int main() {
         l->clearLanes();
         p->clearPlayers();
         level = root["level"].asLargestInt();
+        playKill = root["playKill"].asLargestInt();
+        playLvlUp = root["playLvlUp"].asLargestInt();
 
         countPlayers = root["player"].size();
         for(int i = 0; i < countPlayers; i++){
@@ -218,11 +222,11 @@ int main() {
 
         // // Verifica se tocou em algum bloco
     if(playKill == 1){
-      soundManager->playKillSound(t0);
+      //soundManager->playKillSound(t0);
       playKill = 0; 
     }
     if(playLvlUp == 1){
-      soundManager->playLevelUpSound(t0);
+      //soundManager->playLevelUpSound(t0);
       playLvlUp = 0;
     }
     

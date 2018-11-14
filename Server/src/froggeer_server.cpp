@@ -128,7 +128,8 @@ int main (){
   //tela->init();
 
   //Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
-
+  int playLvlUp = 0;
+  int playKill = 0;
 
   uint64_t t0;
   uint64_t t1;
@@ -149,12 +150,14 @@ int main (){
     f->update(deltaT);
 
     touched = 0;
-
+    playKill = 0;
+    playLvlUp = 0;
     //printf("updated\n");
     for (int i = 0; i < (*players).size(); i++) {
       touched = f->hasTouched((*players)[i]);
           // Verifica se tocou em algum bloco
       if(touched == 1){
+        playKill = 1;
         //soundManager->playKillSound(t0);
         (*players)[i]->resetPos();
         touched = 0; 
@@ -208,6 +211,7 @@ int main (){
       for (int i=0; i<MAX_CONEXOES; i++) {
         levelUpCount[i]=0;
       }
+      playLvlUp = 1;
       nextLevel++;
     }
 
@@ -248,7 +252,8 @@ int main (){
 
     root["lanes"] = lanesJson;
     root["level"] = level;
-    
+    root["playKill"] = playKill;
+    root["playLvlUp"] = playLvlUp;
 
     Json::FastWriter fast;
     //Json::StyledWriter styled;
@@ -256,7 +261,7 @@ int main (){
     buffer.clear();
     buffer.resize(bufferStr.length() + 1);
     std::copy(bufferStr.c_str(), bufferStr.c_str() + bufferStr.length() + 1, buffer.begin());
-    printf("%lu\n",buffer.size());
+    //printf("%lu\n",buffer.size());
     //printf("RECEBI:\n%s\n", bufferStr.c_str());
 
 
