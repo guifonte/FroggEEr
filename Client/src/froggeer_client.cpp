@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <chrono>
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -20,6 +22,12 @@
 #include <iostream>
 #include <fstream>
 #include <jsoncpp/json/json.h> // or jsoncpp/json.h , or json/json.h etc.
+
+using namespace std::chrono;
+
+uint64_t get_now_ms() {
+  return duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count();
+}
 
 int main() {
   int socket_fd;
@@ -59,17 +67,21 @@ int main() {
   //char *bufferchar = new char[buffer.length()+1];
 
   //std::vector<Lane*> *vecLanes;
-  Player *player = new Player();
+  ListaDePlayers *p = new ListaDePlayers();
   ListaDeLanes *l = new ListaDeLanes();
   int level;
   float x;
   float y;
   int countLanes;
+  int countPlayers;
   int laneX;
   float lanePos;
   string content;
 
-  
+  Audio::SoundManager *soundManager = new Audio::SoundManager("res/");
+  int playKill = 0;
+  int playLvlUp = 0;
+
   while(msg_len <= 0){
     msg_len = recv(socket_fd, buffer, 2048, MSG_DONTWAIT);
     if (msg_len > 0) {
@@ -81,10 +93,19 @@ int main() {
         //cout << "Error: " << reader.getFormattedErrorMessages();
       else {
         l->clearLanes();
-        x = root["player"]["x"].asLargestInt();
-        y = root["player"]["y"].asLargestInt();
+        p->clearPlayers();
         level = root["level"].asLargestInt();
-        player->update(x,y);
+        playKill = root["playKill"].asLargestInt();
+        playLvlUp = root["playLvlUp"].asLargestInt();
+
+        countPlayers = root["players"].size();
+        for(int i = 0; i < countPlayers; i++){
+          x = root["players"][i]["x"].asFloat();
+          y = root["players"][i]["y"].asFloat();
+          Player *tempPlayer = new Player(x,y);
+          p->addPlayer(tempPlayer);
+        }
+        
         countLanes = root["lanes"].size();
         for(int i = 0; i < countLanes; i++){
           laneX = root["lanes"][i]["x"].asLargestInt();
@@ -103,10 +124,19 @@ int main() {
   //DataContainer *data = rd->dump();
 
   //Tela *tela = new Tela(&(data->player), &(data->l), &(data->level) ,winX, winY, winX, winY);
-  Tela *tela = new Tela(player,l,&level,winX, winY, winX, winY);
+  Tela *tela = new Tela(p,l,&level,winX, winY, winX, winY);
   //tela->showStartFrog();
   tela->init();
   tela->update();
+
+  uint64_t t0;
+  uint64_t t1;
+  uint64_t deltaT;
+  uint64_t T;
+
+  T = get_now_ms();
+  t1 = T;
+
   while (1) {
 
     //recv(socket_fd, bufferchar, strlen(bufferchar), 0);
@@ -121,10 +151,17 @@ int main() {
         //cout << "Error: " << reader.getFormattedErrorMessages();
       else {
         l->clearLanes();
-        x = root["player"]["x"].asLargestInt();
-        y = root["player"]["y"].asLargestInt();
+        p->clearPlayers();
         level = root["level"].asLargestInt();
-        player->update(x,y);
+
+        countPlayers = root["players"].size();
+        for(int i = 0; i < countPlayers; i++){
+          x = root["players"][i]["x"].asFloat();
+          y = root["players"][i]["y"].asFloat();
+          Player *tempPlayer = new Player(x,y);
+          p->addPlayer(tempPlayer);
+        }
+        
         countLanes = root["lanes"].size();
         for(int i = 0; i < countLanes; i++){
           laneX = root["lanes"][i]["x"].asLargestInt();
@@ -138,10 +175,24 @@ int main() {
       //printf("msg_len =0");
     }
 
-
+    // Atualiza timers
+    t0 = t1;
+    t1 = get_now_ms();
+    deltaT = t1-t0;
 
     // Atualiza tela
     tela->update();
+
+        // // Verifica se tocou em algum bloco
+    if(playKill == 1){
+      soundManager->playKillSound(t0);
+      playKill = 0; 
+    }
+    if(playLvlUp == 1){
+      soundManager->playLevelUpSound(t0);
+      playLvlUp = 0;
+    }
+    
 
     // Lê o teclado
     c = teclado->getchar();
@@ -164,7 +215,7 @@ int main() {
     }
     cPrev = c;
 
-    std::this_thread::sleep_for (std::chrono::milliseconds(100));
+    std::this_thread::sleep_for (std::chrono::milliseconds(50));
 
   }
   

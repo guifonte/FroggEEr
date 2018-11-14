@@ -4,11 +4,17 @@
 
 #include <ncurses.h>
 
-Tela::Tela(Player *player, ListaDeLanes *lanes, int *level, int maxI, int maxJ, float maxX, float maxY) {
-  this->playerAtual = player;
+Tela::Tela(ListaDePlayers *players, ListaDeLanes *lanes, int *level, int maxI, int maxJ, float maxX, float maxY) {
+  this->playersAtuais = players;
   this->lanes = lanes;
-  this->playerAnterior = new Player(0, 0);
-  this->playerAnterior->update(player->getX(),player->getY());
+  for(int i = 0; i <= this->playersAtuais->getNumOfPlayers(); i++){
+    this->playersAnteriores->addPlayer(new Player(0, 0));
+  }
+  std::vector<Player *> *p = this->playersAtuais->getPlayers();
+  std::vector<Player *> *p_ant = this->playersAnteriores->getPlayers();
+  for(int i = 0; i < (*p).size(); i++) {
+    (*p_ant)[i]->update((*p)[i]->getX(),(*p)[i]->getY());
+  }
   this->maxI = maxI;
   this->maxJ = maxJ;
   this->maxX = maxX;
@@ -62,6 +68,9 @@ void Tela::update() {
   int numLines;
   int laneLength;
 
+  std::vector<Player *> *p = this->playersAtuais->getPlayers();
+  std::vector<Player *> *p_ant = this->playersAnteriores->getPlayers();
+
   getmaxyx(stdscr,n_lines,n_cols); /*size of the terminal*/
 
   std::vector<Lane *> *l = this->lanes->getLanes();
@@ -114,34 +123,47 @@ void Tela::update() {
     }
   }
 
-  // Apaga player na tela
+  //------------------------------------------------------------------
+  //-------------------------___________------------------------------
+  //-------------------------| PLAYERS |------------------------------
+  //-------------------------|_________|------------------------------
+  //------------------------------------------------------------------
 
-  playerI = (int) (this->playerAnterior->getX()) * \
-        (this->maxI / this->maxX);
+  
+  for(int i = 0; i < (*p).size(); i++) {
+    (*p_ant)[i]->update((*p)[i]->getX(),(*p)[i]->getY());
 
-  playerJ = (int) (this->playerAnterior->getY()) * \
-        (this->maxJ / this->maxY);
+      // Apaga player na tela
 
-  if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
-    move(playerI, playerJ);   /* Move cursor to position */
-    echochar(' ');  /* Prints character, advances a position */
+    playerI = (int) ((*p_ant)[i]->getX()) * \
+          (this->maxI / this->maxX);
+
+    playerJ = (int) ((*p_ant)[i]->getY()) * \
+          (this->maxJ / this->maxY);
+
+    if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
+      move(playerI, playerJ);   /* Move cursor to position */
+      echochar(' ');  /* Prints character, advances a position */
+    }
+
+    // Desenha player na tela
+
+    playerI = (int) ((*p)[i]->getX()) * \
+          (this->maxI / this->maxX);
+
+    playerJ = (int) ((*p)[i]->getY()) * \
+          (this->maxJ / this->maxY);
+
+    if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
+      move(playerI, playerJ);   /* Move cursor to position */
+      echochar('*');  /* Prints character, advances a position */
+    }
+
+    // Atualiza player
+    (*p_ant)[i]->update((*p)[i]->getX(),(*p)[i]->getY());
+
   }
-
-  // Desenha player na tela
-
-  playerI = (int) (this->playerAtual->getX()) * \
-        (this->maxI / this->maxX);
-
-  playerJ = (int) (this->playerAtual->getY()) * \
-        (this->maxJ / this->maxY);
-
-  if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
-    move(playerI, playerJ);   /* Move cursor to position */
-    echochar('*');  /* Prints character, advances a position */
-  }
-
-  // Atualiza player
-  this->playerAnterior->update(this->playerAtual->getX(), this->playerAtual->getY());
+  
 
   // Atualiza tela
   refresh();

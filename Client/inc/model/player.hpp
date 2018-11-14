@@ -1,5 +1,7 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
+using namespace std;
+#include <vector>
 
 class Player {
   private:
@@ -7,6 +9,7 @@ class Player {
   float startY;
   float x;
   float y;
+  int level;
 
   public:
   Player();
@@ -15,6 +18,21 @@ class Player {
   void resetPos();
   float getX();
   float getY();
+  int getLevel();
+  void levelUp();
+};
+
+class ListaDePlayers {
+ private:
+    std::vector<Player*> *players;
+
+  public:
+    ListaDePlayers();
+    void hard_copy(ListaDePlayers *lp);
+    void addPlayer(Player *p);
+    void clearPlayers();
+    int getNumOfPlayers();
+    std::vector<Player*> *getPlayers();
 };
 
 #endif
