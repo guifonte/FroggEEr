@@ -156,9 +156,9 @@ void Tela::update() {
   //-------------------------|_________|------------------------------
   //------------------------------------------------------------------
 
-  
+  //printf("size %d %d\n",(*p).size(),p->size());
+  //printf("tam %d\n",this->playersAtuais->getNumOfPlayers());
   for(int i = 0; i < (*p).size(); i++) {
-    (*p_ant)[i]->update((*p)[i]->getX(),(*p)[i]->getY());
 
       // Apaga player na tela
 
@@ -167,6 +167,8 @@ void Tela::update() {
 
     playerJ = (int) ((*p_ant)[i]->getY()) * \
           (this->maxJ / this->maxY);
+
+    //printf("I J old: %d %d\n",playerI,playerJ);
 
     if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
       move(playerI, playerJ);   /* Move cursor to position */
@@ -180,6 +182,8 @@ void Tela::update() {
 
     playerJ = (int) ((*p)[i]->getY()) * \
           (this->maxJ / this->maxY);
+
+    //printf("I J new: %d %d\n",playerI,playerJ);
 
     if((playerI < n_lines) && (playerJ < n_cols) && (playerI > 0) && (playerJ > 0)){ /*Check if inside the terminal window*/
       move(playerI, playerJ);   /* Move cursor to position */

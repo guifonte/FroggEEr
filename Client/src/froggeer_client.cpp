@@ -98,10 +98,10 @@ int main() {
         //playKill = root["playKill"].asLargestInt();
         //playLvlUp = root["playLvlUp"].asLargestInt();
 
-        countPlayers = root["players"].size();
+        countPlayers = root["player"].size();
         for(int i = 0; i < countPlayers; i++){
-          x = root["players"][i]["x"].asFloat();
-          y = root["players"][i]["y"].asFloat();
+          x = root["player"][i]["x"].asFloat();
+          y = root["player"][i]["y"].asFloat();
           Player *tempPlayer = new Player(x,y);
           p->addPlayer(tempPlayer);
         }
@@ -155,10 +155,10 @@ int main() {
         p->clearPlayers();
         level = root["level"].asLargestInt();
 
-        countPlayers = root["players"].size();
+        countPlayers = root["player"].size();
         for(int i = 0; i < countPlayers; i++){
-          x = root["players"][i]["x"].asFloat();
-          y = root["players"][i]["y"].asFloat();
+          x = root["player"][i]["x"].asFloat();
+          y = root["player"][i]["y"].asFloat();
           Player *tempPlayer = new Player(x,y);
           p->addPlayer(tempPlayer);
         }
@@ -172,6 +172,7 @@ int main() {
           l->addLane(tempLane);
         }
       }
+      //printf("%d\n",(p->getNumOfPlayers()));
     } else {
       //printf("msg_len =0");
     }
