@@ -1,6 +1,6 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
-#define MAX_CONEXOES 1
+#define MAX_CONEXOES 2
 
 class Server {
   public:
