@@ -28,66 +28,32 @@ int Server::init(unsigned int port){
 }
 
 void Server::accept_connections(int socket_fd, int *connection_fd){
-  int conexao_usada[MAX_CONEXOES];
   struct sockaddr_in client;
   socklen_t client_size = (socklen_t)sizeof(client);
   int conn_fd;
   int user_flag=0;
-  int new_connection_fd;
 
   listen(socket_fd, 2);
 
-  for (int i=0; i<MAX_CONEXOES; i++) {
-    conexao_usada[i] = 0;
-  }
-
-  while(conexao_usada[MAX_CONEXOES-1]!=1) {
+  int user_count=0;
+  while(user_count!=MAX_CONEXOES) {
     conn_fd = accept(socket_fd, (struct sockaddr*)&client, &client_size);
-    int i;
-    for (i=0; i<MAX_CONEXOES; i++) {
-      if (conexao_usada[i] == 0) {
-        conexao_usada[i] = 1;
-        connection_fd[i] = conn_fd;      
-        user_flag=1;
-      }
-    }
-    if (user_flag==1) {
-      printf("Novo usuario chegou!\n");
-      user_flag=0;
-    } else {
-      printf("Sem tentativa de conexão!\n");
-    }
+    connection_fd[user_count] = conn_fd;
+    user_count++;
+    printf("Novo usuario chegou!\n");
   }
-//  return connection_fd;
+  
 }
 
 void Server::run(int *socket_fd, char *key, int *connection_fd){
   struct sockaddr_in client;
   socklen_t client_size = (socklen_t)sizeof(client);
   char input_buffer[50];
-
-  // listen(*socket_fd, 2);
-  // *connection_fd = accept(*socket_fd, (struct sockaddr*)&client, &client_size);
-
-  /* Identificando cliente 
-  char ip_client[INET_ADDRSTRLEN];
-  inet_ntop( AF_INET, &(client.sin_addr), ip_client, INET_ADDRSTRLEN );
-  printf("IP que enviou: %s\n", ip_client);*/
   while (1) {
     for (int i=0; i<MAX_CONEXOES; i++) {
       recv(connection_fd[i], input_buffer, 10, 0);
       key[i] = input_buffer[0];
     }
-    
-    //printf("%s\n", input_buffer);
-
-    /* Respondendo */
-    /*if (send(*connection_fd, "PONG", 5, 0) < 0) {
-      //printf("Erro ao enviar mensagem de retorno\n");
-    } else {
-     // printf("Sucesso para enviar mensagem de retorno\n");
-    }*/
   }
-
   close(*socket_fd);
 }
