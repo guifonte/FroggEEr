@@ -95,17 +95,17 @@ int main (){
   Server *server = new Server();
   int socket_fd = server->init(3001);
   //int connection_fd = 0;
-  int *connection_fd;
+  int connection_fd[MAX_CONEXOES];
   
   server->accept_connections(socket_fd, connection_fd);
   
   // char key = '0';
   // std::thread serverthread(Server::run, &socket_fd, &key, &connection_fd);
 
-  char *key;
+  char key[MAX_CONEXOES];
 
   for (int i=0; i<MAX_CONEXOES; i++) {
-   *(key+i) = '0';
+   key[i] = '0';
   }
 
   std::thread serverthread(Server::run, &socket_fd, key, connection_fd);

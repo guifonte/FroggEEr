@@ -13,11 +13,15 @@
 Tela::Tela(ListaDePlayers *players, ListaDeLanes *lanes, int *level, int maxI, int maxJ, float maxX, float maxY) {
   this->playersAtuais = players;
   this->lanes = lanes;
+
+  this->playersAnteriores = new ListaDePlayers();
   for(int i = 0; i <= this->playersAtuais->getNumOfPlayers(); i++){
     this->playersAnteriores->addPlayer(new Player(0, 0));
   }
+
   std::vector<Player *> *p = this->playersAtuais->getPlayers();
   std::vector<Player *> *p_ant = this->playersAnteriores->getPlayers();
+
   for(int i = 0; i < (*p).size(); i++) {
     (*p_ant)[i]->update((*p)[i]->getX(),(*p)[i]->getY());
   }
@@ -138,8 +142,8 @@ void Tela::update() {
       }
 
       move((*l)[i]->getX(),laneDrawPos +1);
-      
-      if((*l)[i]->content[j]=='>'){
+      //echochar((*l)[i]->content[j]);
+      if((*l)[i]->content[j]=='<'){
         echochar((*l)[i]->content[j]);
       }   
     }
