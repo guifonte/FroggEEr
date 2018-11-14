@@ -17,7 +17,8 @@
 #include <string>
 #include <random>
 #include <time.h>
-
+#include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -121,5 +122,31 @@ class Teclado {
 void delay(float number_of_seconds);
 void showStartFrog();
 void showSadFrog();
+
+class Server {
+  public:
+    Server();
+    int init(unsigned int port);
+    static void run(int *socket_fd, char *key, int *connection_fd);
+};
+
+class DataContainer {
+  public:
+    Player player;
+    ListaDeLanes l;
+};
+
+class RelevantData {
+  private:
+    DataContainer *data;
+
+  public:
+    RelevantData();
+    RelevantData(Player player, ListaDeLanes l);
+    RelevantData(std::string buffer_in);
+    void serialize(std::string &buffer_out);
+    void unserialize(std::string buffer_in);
+    DataContainer dump();
+};
 
 #endif

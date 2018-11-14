@@ -1,6 +1,16 @@
-FLAGS=-lportaudio -lncurses -lpthread -std=c++11
+FLAGS=-lportaudio -lncurses -lpthread -ljsoncpp -std=c++11
 
-all: model
+all: server client
 
-model: model_mainloop.cpp oo_model.cpp oo_model.hpp 01-playback.cpp 01-playback.hpp 
-	g++ -omodel model_mainloop.cpp oo_model.cpp 01-playback.cpp $(FLAGS)
+server: 
+	g++ -o froggeer_server Server/src/froggeer_server.cpp Server/src/model/* Server/src/view/* Server/src/controller/* $(FLAGS)
+
+client:
+	g++ -o froggeer_client Client/src/froggeer_client.cpp Client/src/model/* Client/src/view/* Client/src/controller/* $(FLAGS)
+
+runServer:server
+	./froggeer_server
+	
+runClient:client
+	./froggeer_client
+

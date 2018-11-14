@@ -13,6 +13,16 @@
 #include <thread>
 #include <vector>
 
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#include <string>
+#include <cstring>
+
 #include "01-playback.hpp"
 #include "oo_model.hpp"
 
@@ -83,19 +93,28 @@ int main ()
 
   int touched = 0;//indica se player tocou em algo
 
-  char c;//char clicado no teclado
+  char c,c2;//char clicado no teclado
   char cPrev = 0;//char anterior clicado pelo teclado
 
   Player *player = new Player(laneStartX+2, laneY/2);
   ListaDeLanes *l = new ListaDeLanes();
 
-  Fisica *f = new Fisica(l,player);
+  RelevantData *rd = new RelevantData(*player, *l);
+  string buffer;
 
-  Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
-  tela->init();
+  Fisica *f = new Fisica(l,player);
 
   Teclado *teclado = new Teclado();
   teclado->init();
+
+  Server *server = new Server();
+  int socket_fd = server->init(3001);
+  int connection_fd;
+  char key = '0';
+  std::thread serverthread(Server::run, &socket_fd, &key, &connection_fd);
+
+  Tela *tela = new Tela(player, l, &level ,winX, winY, winX, winY);
+  tela->init();
 
   uint64_t t0;
   uint64_t t1;
@@ -114,6 +133,7 @@ int main ()
     //verifica se muda de nível.
     //Se sim, apaga as lanes anteriores e cria novas com o novo nível
     //Move o player para posição inicial
+
     if(nextLevel == 1) {
       nextLevel = 0;
       l->clearLanes();
@@ -122,8 +142,11 @@ int main ()
       player->resetPos();
     }
 
+
     // Atualiza modelo
     f->update(deltaT);
+
+    //printf("updated\n");
     touched = f->hasTouched();
 
     // Atualiza tela
@@ -154,6 +177,28 @@ int main ()
     }
     cPrev = c;
 
+    c2 = key;
+    if (c2=='w') {
+      if(player->getX() > 3)
+        player->update(player->getX()-1,player->getY());
+    }
+    if (c2=='a') {
+      if(player->getY() > 1)
+        player->update(player->getX(),player->getY()-1);
+    }
+    if (c2=='s') {
+      if(player->getX() < laneStartX+2)
+        player->update(player->getX()+1,player->getY());
+    }
+    if (c2=='d') {
+      if(player->getY() < laneY+2)
+        player->update(player->getX(),player->getY()+1);
+    }
+    if (c2=='q') {
+      break;
+    }
+    key = '0';
+
     // Verifica se tocou em algum bloco
 
     if(touched == 1){
@@ -168,6 +213,11 @@ int main ()
       nextLevel++;
       playLevelUpSound();
     }
+    rd = new RelevantData(*player,*l);
+    rd->serialize(buffer);
+    char *bufferchar = new char[buffer.length()+1];
+    strcpy(bufferchar,buffer.c_str());
+    send(connection_fd, bufferchar, strlen(bufferchar), 0);
 
     // Condicao de parada
     if ( (t1-T) > 1000000 ) break;
@@ -178,6 +228,5 @@ int main ()
   
   tela->stop();
   teclado->stop();
-  
   return 0;
 }

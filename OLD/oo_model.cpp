@@ -17,6 +17,15 @@
 #include <string>
 #include <random>
 
+#include <cstring>
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include "oo_model.hpp"
 
 #include <ncurses.h>
@@ -416,19 +425,7 @@ void Tela::stop() {
 }
 
 Tela::~Tela() {
-  this->stop();;
-}
-
-void threadfun (char *keybuffer, int *control)
-{
-  char c;
-  while ((*control) == 1) {
-    c = getch();
-    if (c!=ERR) (*keybuffer) = c;
-    else (*keybuffer) = 0;
-    std::this_thread::sleep_for (std::chrono::milliseconds(10));
-  }
-  return;
+  this->stop();
 }
 
 void delay(float number_of_seconds) 
@@ -443,8 +440,7 @@ void delay(float number_of_seconds)
     while (clock() < start_time + milli_seconds); 
 } 
 
-void showStartFrog ()
-{
+void showStartFrog(){
     FILE *fptr;
 
     if ((fptr = fopen("./res/froggEEr.txt","r")) == NULL){
@@ -499,6 +495,18 @@ Teclado::Teclado() {
 Teclado::~Teclado() {
 }
 
+void threadfun (char *keybuffer, int *control)
+{
+  char c;
+  while ((*control) == 1) {
+    c = getch();
+    if (c!=ERR) (*keybuffer) = c;
+    else (*keybuffer) = 0;
+    std::this_thread::sleep_for (std::chrono::milliseconds(10));
+  }
+  return;
+}
+
 void Teclado::init() {
   // Inicializa ncurses
   raw();				         /* Line buffering disabled	*/
@@ -520,4 +528,79 @@ char Teclado::getchar() {
   char c = this->ultima_captura;
   this->ultima_captura = 0;
   return c;
+}
+
+
+
+Server::Server() {
+
+}
+
+int Server::init(unsigned int port){
+  int socket_fd;
+  struct sockaddr_in myself;
+
+  socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+  myself.sin_family = AF_INET;
+  myself.sin_port = htons(port);
+  inet_aton("0.0.0.0", &(myself.sin_addr));
+
+  if (::bind(socket_fd, (struct sockaddr*)&myself, sizeof(myself)) != 0) {
+    //return 0;
+  }
+  return socket_fd;
+}
+
+void Server::run(int *socket_fd, char *key, int *connection_fd){
+  struct sockaddr_in client;
+  socklen_t client_size = (socklen_t)sizeof(client);
+  char input_buffer[50];
+
+  listen(*socket_fd, 2);
+  *connection_fd = accept(*socket_fd, (struct sockaddr*)&client, &client_size);
+
+  /* Identificando cliente 
+  char ip_client[INET_ADDRSTRLEN];
+  inet_ntop( AF_INET, &(client.sin_addr), ip_client, INET_ADDRSTRLEN );
+  printf("IP que enviou: %s\n", ip_client);*/
+  while (1) {
+    recv(*connection_fd, input_buffer, 10, 0);
+    *key = input_buffer[0];
+    //printf("%s\n", input_buffer);
+
+    /* Respondendo */
+    /*if (send(*connection_fd, "PONG", 5, 0) < 0) {
+      //printf("Erro ao enviar mensagem de retorno\n");
+    } else {
+     // printf("Sucesso para enviar mensagem de retorno\n");
+    }*/
+  }
+
+  close(*socket_fd);
+}
+
+RelevantData::RelevantData() {
+};
+
+
+RelevantData::RelevantData(Player player, ListaDeLanes l) {
+  this->data->player = player;
+  this->data->l = l;
+}
+
+RelevantData::RelevantData(std::string buffer_in) {
+  this->unserialize(buffer_in);
+}
+
+void RelevantData::serialize(std::string &buffer_out) {
+  std::memcpy((void*)buffer_out.c_str(), &(this->data), sizeof(DataContainer));
+}
+
+void RelevantData::unserialize(std::string buffer_in) {
+  std::memcpy(&(this->data), (void*)buffer_in.c_str(), sizeof(DataContainer));
+}
+
+DataContainer RelevantData::dump() {
+  return *(this->data);
 }
